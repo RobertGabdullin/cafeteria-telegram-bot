@@ -80,7 +80,7 @@ export default function CreateDishForm() {
       <form className="create-dish__form" onSubmit={handleSubmit}>
         <Input
           label="Название блюда"
-          placeholder="Например: Борщ украинский"
+          placeholder="Например: Борщ классический"
           value={form.name}
           onChange={handleChange('name')}
           error={errors.name}

@@ -12,7 +12,7 @@ export default function Sidebar({ activeTab, onTabChange, namespace }) {
       <div className="sidebar__header">
         <div className="sidebar__logo">
           <span className="sidebar__logo-icon">🍴</span>
-          <span className="sidebar__logo-text">MenuHub</span>
+          <span className="sidebar__logo-text">Cafetera</span>
         </div>
         <div className="sidebar__namespace">
           <span className="sidebar__namespace-label">Namespace</span>

@@ -26,3 +26,12 @@
   padding: 40px 48px;
   max-width: 900px;
 }
+
+.workspace__topbar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  justify-content: flex-end;
+  padding: 16px 48px 0;
+}

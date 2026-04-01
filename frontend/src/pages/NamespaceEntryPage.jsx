@@ -28,7 +28,7 @@ export default function NamespaceEntryPage() {
       <div className="ns-entry__card">
         <div className="ns-entry__logo">
           <span className="ns-entry__logo-emoji">🍴</span>
-          <h1 className="ns-entry__logo-text">MenuHub</h1>
+          <h1 className="ns-entry__logo-text">Cafetera</h1>
         </div>
 
         <p className="ns-entry__description">

@@ -1,7 +1,7 @@
 export const mockDishes = [
   {
     id: '1',
-    name: 'Борщ украинский',
+    name: 'Борщ классический',
     composition: 'Свёкла, капуста, картофель, морковь, лук, томатная паста, говядина',
     calories: 120,
     proteins: 8.5,
