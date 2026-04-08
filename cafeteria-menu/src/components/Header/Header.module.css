@@ -1,0 +1,60 @@
+.header {
+  background-color: var(--color-green);
+  padding: var(--spacing-md) var(--spacing-xl);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: var(--header-height);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: var(--shadow-md);
+}
+
+.logoSection {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.logoIcon {
+  font-size: 2rem;
+}
+
+.title {
+  color: var(--color-white);
+  font-size: 1.5rem;
+  font-weight: var(--font-weight-semibold);
+}
+
+.subtitle {
+  color: var(--color-mustard);
+  font-size: 0.85rem;
+  font-weight: var(--font-weight-medium);
+}
+
+.dateSection {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+.date {
+  color: var(--color-white);
+  font-size: 1rem;
+  font-weight: var(--font-weight-semibold);
+}
+
+.timeRange {
+  color: var(--color-mustard);
+  font-size: 0.85rem;
+  font-weight: var(--font-weight-medium);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+.clockIcon {
+  font-size: 0.9rem;
+}
