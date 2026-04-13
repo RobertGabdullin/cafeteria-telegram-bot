@@ -1,3 +1,4 @@
+import { useState } from "react";
 import styles from "./Filters.module.css";
 
 function RangeFilter({ label, value, min, max, step = 1, unit = "", onChange }) {
@@ -68,9 +69,22 @@ export default function Filters({
   onUpdateFilter,
   onReset,
 }) {
+  const [isOpen, setIsOpen] = useState(false);
+
   return (
     <div className={styles.sidebar}>
-      <div className={styles.container}>
+      {/* Кнопка-тоггл — видна только на мобильных */}
+      <button
+        className={styles.toggleButton}
+        onClick={() => setIsOpen(!isOpen)}
+      >
+        <span>⚙️ Фильтры</span>
+        <span className={`${styles.toggleArrow} ${isOpen ? styles.toggleArrowOpen : ""}`}>
+          ▼
+        </span>
+      </button>
+
+      <div className={`${styles.container} ${isOpen ? styles.containerOpen : ""}`}>
         <div className={styles.title}>
           <span className={styles.titleIcon}>⚙️</span>
           Фильтры
