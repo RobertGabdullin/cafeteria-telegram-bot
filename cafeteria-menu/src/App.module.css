@@ -86,3 +86,11 @@
   font-weight: var(--font-weight-medium);
   font-size: 1.1rem;
 }
+
+@media (max-width: 768px) {
+  .layout {
+    flex-direction: column;
+    padding: var(--spacing-md);
+    gap: var(--spacing-md);
+  }
+}
