@@ -141,6 +141,72 @@
   margin-bottom: 0;
 }
 
+/* === Dual Range Slider === */
+
+.dualRange {
+  position: relative;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  margin-top: var(--spacing-xs);
+}
+
+.dualRangeTrack {
+  position: absolute;
+  width: 100%;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--color-gray-200);
+}
+
+.dualRangeActive {
+  position: absolute;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--color-mustard);
+}
+
+.dualRangeInput {
+  -webkit-appearance: none;
+  appearance: none;
+  position: absolute;
+  width: 100%;
+  height: 4px;
+  background: transparent;
+  pointer-events: none;
+  outline: none;
+  margin: 0;
+  padding: 0;
+}
+
+.dualRangeInput::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--color-mustard);
+  border: 2px solid var(--color-white);
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+  pointer-events: all;
+  position: relative;
+  z-index: 2;
+}
+
+.dualRangeInput::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--color-mustard);
+  border: 2px solid var(--color-white);
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+  pointer-events: all;
+  position: relative;
+  z-index: 2;
+}
+
 /* === Кнопка-тоггл (скрыта на десктопе) === */
 
 .toggleButton {

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useCallback } from "react";
 import styles from "./Filters.module.css";
 
 function RangeFilter({ label, value, min, max, step = 1, unit = "", onChange }) {
@@ -26,39 +26,61 @@ function RangeFilter({ label, value, min, max, step = 1, unit = "", onChange }) 
   );
 }
 
-function PriceRangeFilter({ label, valueMin, valueMax, min, max, step = 10, onChangeMin, onChangeMax }) {
+function DualRangeFilter({ label, valueMin, valueMax, min, max, step = 10, unit = "₽", onChangeMin, onChangeMax }) {
+  const trackRef = useRef(null);
+
+  const getPercent = useCallback(
+    (value) => ((value - min) / (max - min)) * 100,
+    [min, max]
+  );
+
+  const leftPercent = getPercent(valueMin);
+  const rightPercent = getPercent(valueMax);
+
   return (
     <div className={styles.sliderGroup}>
       <div className={styles.rangeHeader}>
         <span className={styles.rangeLabel}>{label}</span>
         <span className={styles.rangeValue}>
-          {valueMin} — {valueMax} ₽
+          {valueMin} — {valueMax} {unit}
         </span>
       </div>
-      <input
-        type="range"
-        className={styles.slider}
-        min={min}
-        max={max}
-        step={step}
-        value={valueMin}
-        onChange={(e) => {
-          const v = Number(e.target.value);
-          onChangeMin(Math.min(v, valueMax));
-        }}
-      />
-      <input
-        type="range"
-        className={styles.slider}
-        min={min}
-        max={max}
-        step={step}
-        value={valueMax}
-        onChange={(e) => {
-          const v = Number(e.target.value);
-          onChangeMax(Math.max(v, valueMin));
-        }}
-      />
+      <div className={styles.dualRange} ref={trackRef}>
+        <div
+          className={styles.dualRangeTrack}
+        />
+        <div
+          className={styles.dualRangeActive}
+          style={{
+            left: `${leftPercent}%`,
+            width: `${rightPercent - leftPercent}%`,
+          }}
+        />
+        <input
+          type="range"
+          className={styles.dualRangeInput}
+          min={min}
+          max={max}
+          step={step}
+          value={valueMin}
+          onChange={(e) => {
+            const v = Number(e.target.value);
+            onChangeMin(Math.min(v, valueMax - step));
+          }}
+        />
+        <input
+          type="range"
+          className={styles.dualRangeInput}
+          min={min}
+          max={max}
+          step={step}
+          value={valueMax}
+          onChange={(e) => {
+            const v = Number(e.target.value);
+            onChangeMax(Math.max(v, valueMin + step));
+          }}
+        />
+      </div>
     </div>
   );
 }
@@ -73,7 +95,6 @@ export default function Filters({
 
   return (
     <div className={styles.sidebar}>
-      {/* Кнопка-тоггл — видна только на мобильных */}
       <button
         className={styles.toggleButton}
         onClick={() => setIsOpen(!isOpen)}
@@ -90,16 +111,16 @@ export default function Filters({
           Фильтры
         </div>
 
-        {/* Цена */}
         <div className={styles.group}>
           <div className={styles.groupLabel}>Цена</div>
-          <PriceRangeFilter
+          <DualRangeFilter
             label="Диапазон"
             valueMin={filters.priceMin}
             valueMax={filters.priceMax}
             min={ranges.priceMin}
             max={ranges.priceMax}
             step={10}
+            unit="₽"
             onChangeMin={(v) => onUpdateFilter("priceMin", v)}
             onChangeMax={(v) => onUpdateFilter("priceMax", v)}
           />
@@ -107,10 +128,8 @@ export default function Filters({
 
         <div className={styles.divider} />
 
-        {/* КЖБУ */}
         <div className={styles.group}>
           <div className={styles.groupLabel}>Пищевая ценность</div>
-
           <RangeFilter
             label="Калории"
             value={filters.caloriesMax}
@@ -157,7 +176,6 @@ export default function Filters({
 
         <div className={styles.divider} />
 
-        {/* Дополнительно */}
         <div className={styles.group}>
           <div className={styles.groupLabel}>Дополнительно</div>
           <label className={styles.checkboxRow}>
