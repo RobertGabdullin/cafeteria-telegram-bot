@@ -65,8 +65,13 @@
   margin-bottom: 4px;
 }
 
+.overlay {
+  display: none;
+}
+
 @media (max-width: 768px) {
   .overlay {
+    display: block;
     position: fixed;
     top: 0;
     left: 0;
