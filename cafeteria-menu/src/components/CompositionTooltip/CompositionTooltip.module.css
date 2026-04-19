@@ -66,18 +66,37 @@
 }
 
 @media (max-width: 768px) {
+  .overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 49;
+  }
+
   .tooltip {
     position: fixed;
     bottom: auto;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: calc(100vw - 48px);
-    max-width: 320px;
+    width: calc(100vw - 32px);
+    max-width: 360px;
+    padding: var(--spacing-lg);
+    font-size: 0.95rem;
+    line-height: 1.6;
     pointer-events: none;
+    z-index: 50;
   }
 
   .tooltip::after {
     display: none;
+  }
+
+  .tooltipLabel {
+    font-size: 0.8rem;
+    margin-bottom: var(--spacing-sm);
   }
 }
