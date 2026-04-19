@@ -5,9 +5,13 @@ import { filterDishes, getFilterRanges } from "../utils/filters";
 const INITIAL_FILTERS = {
   priceMin: 0,
   priceMax: 10000,
+  caloriesMin: 0,
   caloriesMax: null,
-  proteinMin: null,
+  proteinMin: 0,
+  proteinMax: null,
+  fatMin: 0,
   fatMax: null,
+  carbsMin: 0,
   carbsMax: null,
   dietaryOnly: false,
 };
@@ -29,13 +33,19 @@ export function useMenu(namespace) {
         const data = await fetchMenu(namespace);
         if (!cancelled) {
           setMenu(data);
-
-          // Установить диапазоны фильтров по данным
           const ranges = getFilterRanges(data.dishes);
           setFilters((prev) => ({
             ...prev,
             priceMin: ranges.priceMin,
             priceMax: ranges.priceMax,
+            caloriesMin: 0,
+            caloriesMax: ranges.caloriesMax,
+            proteinMin: 0,
+            proteinMax: ranges.proteinMax,
+            fatMin: 0,
+            fatMax: ranges.fatMax,
+            carbsMin: 0,
+            carbsMax: ranges.carbsMax,
           }));
         }
       } catch (err) {
@@ -84,6 +94,10 @@ export function useMenu(namespace) {
       ...INITIAL_FILTERS,
       priceMin: ranges.priceMin,
       priceMax: ranges.priceMax,
+      caloriesMax: ranges.caloriesMax,
+      proteinMax: ranges.proteinMax,
+      fatMax: ranges.fatMax,
+      carbsMax: ranges.carbsMax,
     });
   }, [menu]);
 

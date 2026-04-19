@@ -1,47 +1,29 @@
-/**
- * Фильтрация блюд по заданным параметрам
- */
 export function filterDishes(dishes, filters) {
   return dishes.filter((dish) => {
-    // Цена
     if (dish.price !== undefined) {
       if (dish.price < filters.priceMin || dish.price > filters.priceMax) {
         return false;
       }
     }
 
-    // Калории
-    if (filters.caloriesMax !== null && dish.calories > filters.caloriesMax) {
-      return false;
-    }
+    if (filters.caloriesMax !== null && dish.calories > filters.caloriesMax) return false;
+    if (filters.caloriesMin && dish.calories < filters.caloriesMin) return false;
 
-    // Белки
-    if (filters.proteinMin !== null && dish.protein < filters.proteinMin) {
-      return false;
-    }
+    if (filters.proteinMax !== null && dish.protein > filters.proteinMax) return false;
+    if (filters.proteinMin && dish.protein < filters.proteinMin) return false;
 
-    // Жиры
-    if (filters.fatMax !== null && dish.fat > filters.fatMax) {
-      return false;
-    }
+    if (filters.fatMax !== null && dish.fat > filters.fatMax) return false;
+    if (filters.fatMin && dish.fat < filters.fatMin) return false;
 
-    // Углеводы
-    if (filters.carbsMax !== null && dish.carbs > filters.carbsMax) {
-      return false;
-    }
+    if (filters.carbsMax !== null && dish.carbs > filters.carbsMax) return false;
+    if (filters.carbsMin && dish.carbs < filters.carbsMin) return false;
 
-    // Только диетические
-    if (filters.dietaryOnly && !dish.isDietary) {
-      return false;
-    }
+    if (filters.dietaryOnly && !dish.isDietary) return false;
 
     return true;
   });
 }
 
-/**
- * Получить диапазоны значений для фильтров из списка блюд
- */
 export function getFilterRanges(dishes) {
   if (!dishes.length) {
     return {

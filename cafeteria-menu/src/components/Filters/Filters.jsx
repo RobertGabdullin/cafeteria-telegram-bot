@@ -130,47 +130,49 @@ export default function Filters({
 
         <div className={styles.group}>
           <div className={styles.groupLabel}>Пищевая ценность</div>
-          <RangeFilter
+          <DualRangeFilter
             label="Калории"
-            value={filters.caloriesMax}
+            valueMin={filters.caloriesMin}
+            valueMax={filters.caloriesMax ?? ranges.caloriesMax}
             min={0}
             max={ranges.caloriesMax}
             step={10}
             unit="ккал"
-            onChange={(v) =>
-              onUpdateFilter("caloriesMax", v === ranges.caloriesMax ? null : v)
-            }
+            onChangeMin={(v) => onUpdateFilter("caloriesMin", v)}
+            onChangeMax={(v) => onUpdateFilter("caloriesMax", v)}
           />
-          <RangeFilter
-            label="Белки (мин)"
-            value={filters.proteinMin}
+          <DualRangeFilter
+            label="Белки"
+            valueMin={filters.proteinMin}
+            valueMax={filters.proteinMax ?? ranges.proteinMax}
             min={0}
             max={ranges.proteinMax}
             step={1}
             unit="г"
-            onChange={(v) => onUpdateFilter("proteinMin", v === 0 ? null : v)}
+            onChangeMin={(v) => onUpdateFilter("proteinMin", v)}
+            onChangeMax={(v) => onUpdateFilter("proteinMax", v)}
           />
-          <RangeFilter
+          <DualRangeFilter
             label="Жиры"
-            value={filters.fatMax}
+            valueMin={filters.fatMin}
+            valueMax={filters.fatMax ?? ranges.fatMax}
             min={0}
             max={ranges.fatMax}
             step={1}
             unit="г"
-            onChange={(v) =>
-              onUpdateFilter("fatMax", v === ranges.fatMax ? null : v)
-            }
+            onChangeMin={(v) => onUpdateFilter("fatMin", v)}
+            onChangeMax={(v) => onUpdateFilter("fatMax", v)}
           />
-          <RangeFilter
+          <DualRangeFilter
             label="Углеводы"
-            value={filters.carbsMax}
+            valueMin={filters.carbsMin}
+            valueMax={filters.carbsMax ?? ranges.carbsMax}
             min={0}
             max={ranges.carbsMax}
             step={1}
             unit="г"
-            onChange={(v) =>
-              onUpdateFilter("carbsMax", v === ranges.carbsMax ? null : v)
-            }
+            onChangeMin={(v) => onUpdateFilter("carbsMin", v)}
+            onChangeMax={(v) => onUpdateFilter("carbsMax", v)}
           />
         </div>
 
