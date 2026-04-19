@@ -54,3 +54,64 @@
   flex-direction: column;
   gap: var(--spacing-sm);
 }
+
+.categorySection {
+  margin-bottom: var(--spacing-md);
+}
+
+.categorySection:last-child {
+  margin-bottom: 0;
+}
+
+.categoryHeader {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-sm);
+  padding-bottom: var(--spacing-xs);
+  border-bottom: 2px solid var(--color-mustard);
+}
+
+.categoryName {
+  font-size: 1rem;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-green);
+}
+
+.choiceBadge {
+  font-size: 0.7rem;
+  font-weight: var(--font-weight-bold);
+  color: var(--color-white);
+  background: var(--color-mustard);
+  padding: 2px 10px;
+  border-radius: var(--radius-full);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.categoryDishes {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.orDivider {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-xs) 0;
+}
+
+.orLine {
+  flex: 1;
+  height: 1px;
+  background: var(--color-gray-300);
+}
+
+.orText {
+  font-size: 0.75rem;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-gray-500);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
