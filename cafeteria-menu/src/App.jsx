@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import styles from "./App.module.css";
 import { useMenu } from "./hooks/useMenu";
+import { filterDishes } from "./utils/filters";
 import Header from "./components/Header/Header";
 import CategoryTabs from "./components/CategoryTabs/CategoryTabs";
 import Filters from "./components/Filters/Filters";
@@ -26,14 +27,26 @@ export default function App() {
   const dishCounts = useMemo(() => {
     if (!menu) return {};
     const counts = {};
-    menu.dishes.forEach((d) => {
+
+    // Считаем по отфильтрованным блюдам (не бизнес-ланч)
+    const filtered = filterDishes(menu.dishes, filters);
+    filtered.forEach((d) => {
       counts[d.category] = (counts[d.category] || 0) + 1;
     });
+
+    // Бизнес-ланч — считаем с КЖБУ фильтрами, без цены
     if (menu.businessLunch) {
-      counts["business-lunch"] = menu.businessLunch.items.length;
+      const nutritionFilters = {
+        ...filters,
+        priceMin: 0,
+        priceMax: Infinity,
+      };
+      const filteredBL = filterDishes(menu.businessLunch.items, nutritionFilters);
+      counts["business-lunch"] = filteredBL.length;
     }
+
     return counts;
-  }, [menu]);
+  }, [menu, filters]);
 
   if (loading) {
     return (

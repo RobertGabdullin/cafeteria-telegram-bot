@@ -115,3 +115,28 @@
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
+
+.categoryHeaderEmpty {
+  opacity: 0.5;
+}
+
+.emptyBadge {
+  font-size: 0.7rem;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-gray-500);
+  background: var(--color-gray-200);
+  padding: 2px 10px;
+  border-radius: var(--radius-full);
+  margin-left: auto;
+}
+
+.emptyCategory {
+  padding: var(--spacing-md);
+  text-align: center;
+  color: var(--color-gray-500);
+  font-size: 0.85rem;
+  font-style: italic;
+  background: var(--color-gray-100);
+  border-radius: var(--radius-md);
+  border: 1px dashed var(--color-gray-300);
+}

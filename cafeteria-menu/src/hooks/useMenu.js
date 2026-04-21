@@ -67,7 +67,12 @@ export function useMenu(namespace) {
     if (!menu) return [];
 
     if (isBusinessLunch) {
-      return filterDishes(menu.businessLunch.items, filters);
+      const nutritionFilters = {
+        ...filters,
+        priceMin: 0,
+        priceMax: Infinity,
+      };
+      return filterDishes(menu.businessLunch.items, nutritionFilters);
     }
 
     let dishes = menu.dishes;

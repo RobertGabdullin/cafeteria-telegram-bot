@@ -2,12 +2,15 @@ import styles from "./BusinessLunch.module.css";
 import DishCard from "../DishCard/DishCard";
 
 export default function BusinessLunch({ businessLunch, filteredItems, categories }) {
-  // Группируем блюда по категориям
-  const grouped = {};
-  filteredItems.forEach((dish) => {
-    if (!grouped[dish.category]) grouped[dish.category] = [];
-    grouped[dish.category].push(dish);
+  // Все блюда сгруппированные (для отображения пустых категорий)
+  const allGrouped = {};
+  businessLunch.items.forEach((dish) => {
+    if (!allGrouped[dish.category]) allGrouped[dish.category] = [];
+    allGrouped[dish.category].push(dish);
   });
+
+  // Отфильтрованные блюда
+  const filteredSet = new Set(filteredItems.map((d) => d.id));
 
   const categoryMap = {};
   categories.forEach((c) => {
@@ -16,7 +19,7 @@ export default function BusinessLunch({ businessLunch, filteredItems, categories
 
   // Порядок категорий как в меню
   const orderedCategories = categories
-    .filter((c) => c.id !== "business-lunch" && grouped[c.id])
+    .filter((c) => c.id !== "business-lunch" && allGrouped[c.id])
     .map((c) => c.id);
 
   return (
@@ -35,31 +38,47 @@ export default function BusinessLunch({ businessLunch, filteredItems, categories
         Фиксированная цена — выберите по одному блюду из каждой категории
       </div>
 
-      {orderedCategories.map((catId) => (
-        <div key={catId} className={styles.categorySection}>
-          <div className={styles.categoryHeader}>
-            <span>{categoryMap[catId]?.icon}</span>
-            <span className={styles.categoryName}>
-              {categoryMap[catId]?.name}
-            </span>
-            <span className={styles.choiceBadge}>1 на выбор</span>
-          </div>
-          <div className={styles.categoryDishes}>
-            {grouped[catId].map((dish, index) => (
-              <div key={dish.id}>
-                <DishCard dish={dish} showPrice={false} />
-                {index < grouped[catId].length - 1 && (
-                  <div className={styles.orDivider}>
-                    <div className={styles.orLine} />
-                    <span className={styles.orText}>или</span>
-                    <div className={styles.orLine} />
-                  </div>
-                )}
+      {orderedCategories.map((catId) => {
+        const allDishes = allGrouped[catId];
+        const visibleDishes = allDishes.filter((d) => filteredSet.has(d.id));
+        const allHidden = visibleDishes.length === 0;
+
+        return (
+          <div key={catId} className={styles.categorySection}>
+            <div className={`${styles.categoryHeader} ${allHidden ? styles.categoryHeaderEmpty : ""}`}>
+              <span>{categoryMap[catId]?.icon}</span>
+              <span className={styles.categoryName}>
+                {categoryMap[catId]?.name}
+              </span>
+              <span className={styles.choiceBadge}>1 на выбор</span>
+              {allHidden && (
+                <span className={styles.emptyBadge}>нет подходящих</span>
+              )}
+            </div>
+
+            {allHidden ? (
+              <div className={styles.emptyCategory}>
+                Ни одно блюдо не соответствует фильтрам
               </div>
-            ))}
+            ) : (
+              <div className={styles.categoryDishes}>
+                {visibleDishes.map((dish, index) => (
+                  <div key={dish.id}>
+                    <DishCard dish={dish} showPrice={false} />
+                    {index < visibleDishes.length - 1 && (
+                      <div className={styles.orDivider}>
+                        <div className={styles.orLine} />
+                        <span className={styles.orText}>или</span>
+                        <div className={styles.orLine} />
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 }
