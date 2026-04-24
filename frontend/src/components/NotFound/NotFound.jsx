@@ -12,7 +12,7 @@ export default function NotFound() {
       <p className={styles.hint}>
         Проверьте адрес или обратитесь к администратору
       </p>
-      <Link to="/menu/cafeteria-main" className={styles.link}>
+      <Link to="/menu" className={styles.link}>
         ☕ На главную
       </Link>
     </div>

@@ -1,0 +1,166 @@
+.container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, var(--color-cream) 0%, var(--color-white) 100%);
+  padding: var(--spacing-xl);
+}
+
+.content {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: var(--spacing-2xl) 0;
+}
+
+.hero {
+  text-align: center;
+  margin-bottom: var(--spacing-2xl);
+}
+
+.logo {
+  font-size: 4rem;
+  margin-bottom: var(--spacing-md);
+}
+
+.title {
+  font-size: 2.4rem;
+  font-weight: var(--font-weight-bold);
+  color: var(--color-green);
+  margin-bottom: var(--spacing-md);
+  line-height: 1.2;
+}
+
+.subtitle {
+  font-size: 1.1rem;
+  color: var(--color-gray-700);
+  max-width: 600px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+.features {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: var(--spacing-lg);
+  margin-bottom: var(--spacing-2xl);
+}
+
+.feature {
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-lg);
+  text-align: center;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.feature:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.featureIcon {
+  font-size: 2.4rem;
+  margin-bottom: var(--spacing-sm);
+}
+
+.featureTitle {
+  font-size: 1.05rem;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-green);
+  margin-bottom: var(--spacing-xs);
+}
+
+.featureText {
+  font-size: 0.9rem;
+  color: var(--color-gray-700);
+  line-height: 1.5;
+}
+
+.howTo {
+  background: var(--color-white);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-2xl);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--color-gray-200);
+  margin-bottom: var(--spacing-2xl);
+}
+
+.howToTitle {
+  font-size: 1.5rem;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-green);
+  margin-bottom: var(--spacing-lg);
+  text-align: center;
+}
+
+.steps {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+.step {
+  display: flex;
+  gap: var(--spacing-md);
+  align-items: flex-start;
+}
+
+.stepNumber {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--color-mustard);
+  color: var(--color-green);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: var(--font-weight-bold);
+  font-size: 1rem;
+}
+
+.stepContent {
+  flex: 1;
+}
+
+.stepTitle {
+  font-size: 1rem;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-green);
+  margin-bottom: var(--spacing-xs);
+}
+
+.stepText {
+  font-size: 0.9rem;
+  color: var(--color-gray-700);
+  line-height: 1.5;
+}
+
+.footer {
+  text-align: center;
+  color: var(--color-gray-500);
+  font-size: 0.85rem;
+  padding-top: var(--spacing-xl);
+  border-top: 1px solid var(--color-gray-200);
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: var(--spacing-md);
+  }
+
+  .title {
+    font-size: 1.8rem;
+  }
+
+  .subtitle {
+    font-size: 0.95rem;
+  }
+
+  .howTo {
+    padding: var(--spacing-lg);
+  }
+
+  .howToTitle {
+    font-size: 1.25rem;
+  }
+}
