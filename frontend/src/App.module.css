@@ -81,12 +81,39 @@
   font-size: 3rem;
 }
 
-.errorText {
-  color: var(--color-red);
-  font-weight: var(--font-weight-medium);
-  font-size: 1.1rem;
+.errorContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  padding: var(--spacing-xl);
+  text-align: center;
 }
 
+.errorIcon {
+  font-size: 4rem;
+}
+
+.errorTitle {
+  font-size: 1.5rem;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-green);
+}
+
+.errorText {
+  color: var(--color-gray-700);
+  font-weight: var(--font-weight-medium);
+  font-size: 1rem;
+  max-width: 400px;
+  line-height: 1.5;
+}
+
+.errorHint {
+  color: var(--color-gray-500);
+  font-size: 0.85rem;
+}
 @media (max-width: 768px) {
   .layout {
     flex-direction: column;

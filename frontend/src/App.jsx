@@ -1,3 +1,5 @@
+import React from "react"
+import { useParams } from "react-router-dom";
 import { useMemo } from "react";
 import styles from "./App.module.css";
 import { useMenu } from "./hooks/useMenu";
@@ -9,6 +11,7 @@ import DishList from "./components/DishList/DishList";
 import BusinessLunch from "./components/BusinessLunch/BusinessLunch";
 
 export default function App() {
+  const { namespace } = useParams();
   const {
     menu,
     loading,
@@ -21,7 +24,7 @@ export default function App() {
     filteredDishes,
     filterRanges,
     isBusinessLunch,
-  } = useMenu("cafeteria-main");
+  } = useMenu(namespace);
 
   // Подсчёт блюд по категориям (для табов)
   const dishCounts = useMemo(() => {
@@ -61,14 +64,16 @@ export default function App() {
   }
 
   if (error) {
-    return (
-      <div className={styles.app}>
-        <Header />
-        <div className={styles.errorContainer}>
-          <span className={styles.errorIcon}>😕</span>
-          <span className={styles.errorText}>{error}</span>
-        </div>
-      </div>
+    const cls = [styles.app, styles.errorContainer, styles.errorIcon, styles.errorTitle, styles.errorText, styles.errorHint];
+
+    return React.createElement("div", { className: cls[0] },
+      React.createElement(Header),
+      React.createElement("div", { className: cls[1] },
+        React.createElement("span", { className: cls[2] }, "🍽️"),
+        React.createElement("span", { className: cls[3] }, "Меню не найдено"),
+        React.createElement("span", { className: cls[4] }, "Меню для этой точки ещё не загружено или не доступно на сегодня"),
+        React.createElement("span", { className: cls[5] }, "Проверьте адрес или попробуйте позже")
+      )
     );
   }
 

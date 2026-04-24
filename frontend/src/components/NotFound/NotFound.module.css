@@ -1,0 +1,54 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 80vh;
+  padding: var(--spacing-xl);
+  text-align: center;
+}
+
+.icon {
+  font-size: 4rem;
+  margin-bottom: var(--spacing-lg);
+}
+
+.title {
+  font-size: 1.8rem;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-green);
+  margin-bottom: var(--spacing-md);
+}
+
+.message {
+  font-size: 1rem;
+  color: var(--color-gray-700);
+  max-width: 440px;
+  line-height: 1.6;
+  margin-bottom: var(--spacing-lg);
+}
+
+.hint {
+  font-size: 0.85rem;
+  color: var(--color-gray-500);
+  margin-bottom: var(--spacing-xl);
+}
+
+.link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm) var(--spacing-lg);
+  background: var(--color-mustard);
+  color: var(--color-green);
+  font-family: var(--font-family);
+  font-size: 0.95rem;
+  font-weight: var(--font-weight-semibold);
+  border-radius: var(--radius-full);
+  text-decoration: none;
+  transition: background 0.2s ease;
+}
+
+.link:hover {
+  background: var(--color-mustard-hover);
+}
