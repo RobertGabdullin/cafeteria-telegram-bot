@@ -1,3 +1,5 @@
+.PHONY: up down add-admin
+
 up:
 	docker-compose down -v
 	docker-compose up -d --wait
@@ -8,3 +10,5 @@ up:
 down:
 	docker-compose down -v
 
+add-admin:
+	cd backend && python add_admin.py --login=$(LOGIN)
