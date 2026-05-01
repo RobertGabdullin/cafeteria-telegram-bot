@@ -34,7 +34,7 @@ export default function Home() {
 
           <div className={styles.feature}>
             <div className={styles.featureIcon}>🥬</div>
-            <div className={styles.featureTitle}>Состав и БЖУ</div>
+            <div className={styles.featureTitle}>Состав и КЖБУ</div>
             <div className={styles.featureText}>
               У каждого блюда — подробный состав, вес и пищевая ценность
             </div>

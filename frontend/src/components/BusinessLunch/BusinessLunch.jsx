@@ -14,19 +14,18 @@ export default function BusinessLunch({ businessLunch, filteredItems, categories
 
   const categoryMap = {};
   categories.forEach((c) => {
-    categoryMap[c.id] = c;
+    categoryMap[c.name] = c;
   });
 
-  // Порядок категорий как в меню
+  // Порядок категорий как в меню (исключаем бизнес-ланч)
   const orderedCategories = categories
-    .filter((c) => c.id !== "business-lunch" && allGrouped[c.id])
-    .map((c) => c.id);
+    .filter((c) => c.name !== "Бизнес ланч" && allGrouped[c.name])
+    .map((c) => c.name);
 
   return (
     <div className={styles.container}>
       <div className={styles.header}>
         <div className={styles.title}>
-          <span className={styles.titleIcon}>🍽️</span>
           Бизнес ланч
         </div>
         <div className={styles.price}>
@@ -46,7 +45,6 @@ export default function BusinessLunch({ businessLunch, filteredItems, categories
         return (
           <div key={catId} className={styles.categorySection}>
             <div className={`${styles.categoryHeader} ${allHidden ? styles.categoryHeaderEmpty : ""}`}>
-              <span>{categoryMap[catId]?.icon}</span>
               <span className={styles.categoryName}>
                 {categoryMap[catId]?.name}
               </span>

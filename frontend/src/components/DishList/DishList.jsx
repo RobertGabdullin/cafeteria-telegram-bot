@@ -10,7 +10,6 @@ export default function DishList({
   if (!dishes.length) {
     return (
       <div className={styles.empty}>
-        <div className={styles.emptyIcon}>🍽️</div>
         <div className={styles.emptyText}>Блюда не найдены</div>
         <div className={styles.emptyHint}>
           Попробуйте изменить фильтры или выбрать другую категорию
@@ -26,17 +25,12 @@ export default function DishList({
       grouped[dish.category].push(dish);
     });
 
-    const categoryMap = {};
-    categories.forEach((c) => {
-      categoryMap[c.id] = c;
-    });
-
     return (
       <div className={styles.container}>
-        {Object.entries(grouped).map(([catId, catDishes]) => (
-          <div key={catId} className={styles.categoryGroup}>
+        {Object.entries(grouped).map(([catName, catDishes]) => (
+          <div key={catName} className={styles.categoryGroup}>
             <div className={styles.categoryTitle}>
-              {categoryMap[catId]?.icon} {categoryMap[catId]?.name || catId}
+              {catName}
             </div>
             <div className={styles.dishesInGroup}>
               {catDishes.map((dish) => (

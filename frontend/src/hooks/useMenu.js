@@ -16,11 +16,38 @@ const INITIAL_FILTERS = {
   dietaryOnly: false,
 };
 
+// Получить текущее время в формате "HH:MM"
+function getCurrentTime() {
+  const now = new Date();
+  const hours = String(now.getHours()).padStart(2, '0');
+  const minutes = String(now.getMinutes()).padStart(2, '0');
+  return `${hours}:${minutes}`;
+}
+
+// Проверка, попадает ли время в диапазон
+function isTimeInRange(currentTime, timeRange) {
+  if (!timeRange || !timeRange.from || !timeRange.to) return false;
+  return currentTime >= timeRange.from && currentTime <= timeRange.to;
+}
+
+// Извлечь уникальные временные диапазоны из блюд
+function extractTimeRanges(dishes) {
+  const ranges = new Map();
+  dishes.forEach((dish) => {
+    if (dish.timeRange && dish.timeRange.from && dish.timeRange.to) {
+      const label = `${dish.timeRange.from}—${dish.timeRange.to}`;
+      ranges.set(label, dish.timeRange);
+    }
+  });
+  return Array.from(ranges.entries()).map(([label, range]) => ({ label, ...range }));
+}
+
 export function useMenu(namespace) {
   const [menu, setMenu] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [activeCategory, setActiveCategory] = useState("all");
+  const [activeTimeRange, setActiveTimeRange] = useState("all");
   const [filters, setFilters] = useState(INITIAL_FILTERS);
 
   useEffect(() => {
@@ -61,7 +88,36 @@ export function useMenu(namespace) {
     };
   }, [namespace]);
 
-  const isBusinessLunch = activeCategory === "business-lunch";
+  // Временные диапазоны из блюд
+  const timeRanges = useMemo(() => {
+    if (!menu) return [];
+    return extractTimeRanges(menu.dishes);
+  }, [menu]);
+
+  // Определение текущего временного диапазона
+  const defaultTimeRange = useMemo(() => {
+    if (!menu || timeRanges.length === 0) return "all";
+    const currentTime = getCurrentTime();
+    const matchingRange = timeRanges.find((range) =>
+      isTimeInRange(currentTime, range)
+    );
+    return matchingRange ? matchingRange.label : "all";
+  }, [menu, timeRanges]);
+
+  // Инициализация activeTimeRange после загрузки меню
+  useEffect(() => {
+    if (menu && activeTimeRange === "all" && timeRanges.length > 0) {
+      const currentTime = getCurrentTime();
+      const matchingRange = timeRanges.find((range) =>
+        isTimeInRange(currentTime, range)
+      );
+      if (matchingRange) {
+        setActiveTimeRange(matchingRange.label);
+      }
+    }
+  }, [menu, timeRanges]);
+
+  const isBusinessLunch = activeCategory === "Бизнес ланч";
 
   const filteredDishes = useMemo(() => {
     if (!menu) return [];
@@ -80,8 +136,17 @@ export function useMenu(namespace) {
       dishes = dishes.filter((d) => d.category === activeCategory);
     }
 
+    // Фильтрация по временному диапазону
+    if (activeTimeRange !== "all") {
+      const [from, to] = activeTimeRange.split("—");
+      dishes = dishes.filter((d) => {
+        if (!d.timeRange || !d.timeRange.from || !d.timeRange.to) return false;
+        return d.timeRange.from === from && d.timeRange.to === to;
+      });
+    }
+
     return filterDishes(dishes, filters);
-  }, [menu, activeCategory, filters, isBusinessLunch]);
+  }, [menu, activeCategory, activeTimeRange, filters, isBusinessLunch]);
 
   const filterRanges = useMemo(() => {
     if (!menu) return getFilterRanges([]);
@@ -112,6 +177,9 @@ export function useMenu(namespace) {
     error,
     activeCategory,
     setActiveCategory,
+    activeTimeRange,
+    setActiveTimeRange,
+    timeRanges,
     filters,
     updateFilter,
     resetFilters,

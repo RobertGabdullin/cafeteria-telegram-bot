@@ -1,35 +1,37 @@
+import React from "react";
 import styles from "./Header.module.css";
+import logo from "../../assets/logo.png";
 
 function formatDate(dateStr) {
-  const date = new Date(dateStr);
-  return date.toLocaleDateString("ru-RU", {
-    weekday: "long",
+  if (!dateStr) return "";
+  const clean = String(dateStr).replace(/\*/g, "");
+  const d = new Date(clean);
+  if (isNaN(d)) return clean;
+  return d.toLocaleDateString("ru-RU", {
     day: "numeric",
     month: "long",
-    year: "numeric",
+    weekday: "long",
   });
 }
 
-export default function Header({ date, timeRange }) {
-  return (
-    <header className={styles.header}>
-      <div className={styles.logoSection}>
-        <span className={styles.logoIcon}>☕</span>
-        <div>
-          <h1 className={styles.title}>Кафетерия</h1>
-          <span className={styles.subtitle}>Цифровое меню</span>
-        </div>
-      </div>
-
-      {date && timeRange && (
-        <div className={styles.dateSection}>
-          <span className={styles.date}>{formatDate(date)}</span>
-          <span className={styles.timeRange}>
-            <span className={styles.clockIcon}>🕐</span>
-            {timeRange.from} — {timeRange.to}
-          </span>
-        </div>
-      )}
-    </header>
+export default function Header({ date }) {
+  return React.createElement(
+    "header",
+    { className: styles.header },
+    React.createElement(
+      "div",
+      { className: styles.leftSection },
+      React.createElement("img", {
+        src: logo,
+        alt: "Логотип",
+        className: styles.logo,
+      })
+    ),
+    date &&
+      React.createElement(
+        "div",
+        { className: styles.dateSection },
+        React.createElement("span", { className: styles.date }, formatDate(date))
+      )
   );
 }

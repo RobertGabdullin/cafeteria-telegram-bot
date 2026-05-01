@@ -13,17 +13,12 @@ def parse_pdf_stub(pdf_bytes: bytes) -> dict:
     """Заглушка парсера PDF. Пока возвращает моковое меню."""
     return {
         "date": None,
-        "timeRange": {"from": "10:00", "to": "16:00"},
         "namespace": None,
-        "categories": [
-            {"id": "hot", "name": "Горячее", "icon": "🍳"},
-            {"id": "drinks", "name": "Напитки", "icon": "☕"},
-        ],
         "dishes": [
             {
                 "id": 1,
                 "name": "Блюдо из загруженного PDF",
-                "category": "hot",
+                "category": "Горячее",
                 "price": 250,
                 "weight": 200,
                 "calories": 300,
@@ -33,6 +28,7 @@ def parse_pdf_stub(pdf_bytes: bytes) -> dict:
                 "composition": "Ингредиенты из PDF",
                 "isDietary": False,
                 "isPromo": False,
+                "timeRange": {"from": "11:30", "to": "17:30"},
             },
         ],
     }

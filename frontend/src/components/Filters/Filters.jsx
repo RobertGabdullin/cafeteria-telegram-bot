@@ -162,7 +162,6 @@ export default function Filters({
               onChange={(e) => onUpdateFilter("dietaryOnly", e.target.checked)}
             />
             <span className={styles.checkboxLabel}>
-              <span className={styles.dietaryIcon}>🥬</span>
               Только диетические
             </span>
           </label>

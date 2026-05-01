@@ -5,7 +5,7 @@ import styles from "./App.module.css";
 import { useMenu } from "./hooks/useMenu";
 import { filterDishes } from "./utils/filters";
 import Header from "./components/Header/Header";
-import CategoryTabs from "./components/CategoryTabs/CategoryTabs";
+import FilterBar from "./components/FilterBar/FilterBar";
 import Filters from "./components/Filters/Filters";
 import DishList from "./components/DishList/DishList";
 import BusinessLunch from "./components/BusinessLunch/BusinessLunch";
@@ -18,6 +18,9 @@ export default function App() {
     error,
     activeCategory,
     setActiveCategory,
+    activeTimeRange,
+    setActiveTimeRange,
+    timeRanges,
     filters,
     updateFilter,
     resetFilters,
@@ -26,13 +29,64 @@ export default function App() {
     isBusinessLunch,
   } = useMenu(namespace);
 
-  // Подсчёт блюд по категориям (для табов)
+  // Извлечение уникальных категорий из блюд (category теперь это имя)
+  const categories = useMemo(() => {
+    if (!menu) return [];
+    const categorySet = new Set();
+    
+    // Фильтруем блюда по временному диапазону (если выбран)
+    let dishesToConsider = menu.dishes;
+    if (activeTimeRange !== "all") {
+      const [from, to] = activeTimeRange.split("—");
+      dishesToConsider = dishesToConsider.filter((d) => {
+        if (!d.timeRange || !d.timeRange.from || !d.timeRange.to) return false;
+        return d.timeRange.from === from && d.timeRange.to === to;
+      });
+    }
+    
+    // Добавляем только категории, у которых есть блюда в выбранном диапазоне
+    dishesToConsider.forEach((dish) => categorySet.add(dish.category));
+    
+    // Добавляем категорию "Бизнес ланч" если есть бизнес-ланч
+    if (menu.businessLunch) {
+      // Для бизнес-ланча также проверяем временной диапазон
+      let blItemsToConsider = menu.businessLunch.items;
+      if (activeTimeRange !== "all") {
+        const [from, to] = activeTimeRange.split("—");
+        blItemsToConsider = blItemsToConsider.filter((d) => {
+          if (!d.timeRange || !d.timeRange.from || !d.timeRange.to) return false;
+          return d.timeRange.from === from && d.timeRange.to === to;
+        });
+      }
+      if (blItemsToConsider.length > 0) {
+        categorySet.add("Бизнес ланч");
+      }
+    }
+    
+    // category теперь и есть имя, используем его же как id
+    return Array.from(categorySet).map((name) => ({
+      id: name,
+      name,
+    }));
+  }, [menu, activeTimeRange]);
+
+  // Подсчёт блюд по категориям (для табов) — учитываем все фильтры
   const dishCounts = useMemo(() => {
     if (!menu) return {};
     const counts = {};
 
     // Считаем по отфильтрованным блюдам (не бизнес-ланч)
-    const filtered = filterDishes(menu.dishes, filters);
+    let filtered = filterDishes(menu.dishes, filters);
+    
+    // Учитываем временной диапазон
+    if (activeTimeRange !== "all") {
+      const [from, to] = activeTimeRange.split("—");
+      filtered = filtered.filter((d) => {
+        if (!d.timeRange || !d.timeRange.from || !d.timeRange.to) return false;
+        return d.timeRange.from === from && d.timeRange.to === to;
+      });
+    }
+    
     filtered.forEach((d) => {
       counts[d.category] = (counts[d.category] || 0) + 1;
     });
@@ -44,12 +98,22 @@ export default function App() {
         priceMin: 0,
         priceMax: Infinity,
       };
-      const filteredBL = filterDishes(menu.businessLunch.items, nutritionFilters);
-      counts["business-lunch"] = filteredBL.length;
+      let filteredBL = filterDishes(menu.businessLunch.items, nutritionFilters);
+      
+      // Учитываем временной диапазон для бизнес-ланча
+      if (activeTimeRange !== "all") {
+        const [from, to] = activeTimeRange.split("—");
+        filteredBL = filteredBL.filter((d) => {
+          if (!d.timeRange || !d.timeRange.from || !d.timeRange.to) return false;
+          return d.timeRange.from === from && d.timeRange.to === to;
+        });
+      }
+      
+      counts["Бизнес ланч"] = filteredBL.length;
     }
 
     return counts;
-  }, [menu, filters]);
+  }, [menu, filters, activeTimeRange]);
 
   if (loading) {
     return (
@@ -79,12 +143,15 @@ export default function App() {
 
   return (
     <div className={styles.app}>
-      <Header date={menu.date} timeRange={menu.timeRange} />
+      <Header date={menu.date}/>
 
-      <CategoryTabs
-        categories={menu.categories}
+      <FilterBar
+        categories={categories}
         activeCategory={activeCategory}
         onCategoryChange={setActiveCategory}
+        timeRanges={timeRanges}
+        activeTimeRange={activeTimeRange}
+        onTimeRangeChange={setActiveTimeRange}
         dishCounts={dishCounts}
       />
 
@@ -109,12 +176,12 @@ export default function App() {
             <BusinessLunch
               businessLunch={menu.businessLunch}
               filteredItems={filteredDishes}
-              categories={menu.categories}
+              categories={categories}
             />
           ) : (
             <DishList
               dishes={filteredDishes}
-              categories={menu.categories}
+              categories={categories}
               showPrice={true}
               groupByCategory={activeCategory === "all"}
             />

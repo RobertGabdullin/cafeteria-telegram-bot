@@ -1,5 +1,4 @@
 import styles from "./DishCard.module.css";
-import CompositionTooltip from "../CompositionTooltip/CompositionTooltip";
 
 export default function DishCard({ dish, showPrice = true }) {
   return (
@@ -13,7 +12,6 @@ export default function DishCard({ dish, showPrice = true }) {
             )}
             {dish.isPromo && <span className={styles.badgePromo}>Акция</span>}
           </div>
-          <CompositionTooltip composition={dish.composition} />
         </div>
 
         <div className={styles.meta}>
