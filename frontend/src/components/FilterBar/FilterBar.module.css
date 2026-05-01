@@ -49,10 +49,11 @@
 .expandedList {
   display: flex;
   flex-direction: row;
-  gap: 12px;
+  gap: 8px;
   overflow-x: auto;
-  padding: 0;
-  flex: 1;
+  padding: 4px 0;
+  max-width: calc(100vw - 48px);
+  -webkit-overflow-scrolling: touch;
 }
 
 .expandedItem {
@@ -104,4 +105,35 @@
 .expandedItemActive .itemCount {
   background: rgba(255, 255, 255, 0.25);
   color: var(--color-white);
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 12px;
+  }
+
+  .bar {
+    gap: 8px;
+  }
+
+  .button {
+    padding: 8px 12px;
+    font-size: 13px;
+  }
+
+  .buttonLabel {
+    min-width: 40px;
+    max-width: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .expandedList {
+    max-width: calc(100vw - 40px);
+  }
+
+  .expandedItem {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
 }
