@@ -14,7 +14,7 @@ function formatDate(dateStr) {
   });
 }
 
-export default function Header({ date }) {
+export default function Header({ date, children }) {
   return React.createElement(
     "header",
     { className: styles.header },
@@ -32,6 +32,12 @@ export default function Header({ date }) {
         "div",
         { className: styles.dateSection },
         React.createElement("span", { className: styles.date }, formatDate(date))
+      ),
+    children &&
+      React.createElement(
+        "div",
+        { className: styles.rightSection },
+        children
       )
   );
 }

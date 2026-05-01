@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate, useLocation, Navigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
+import Header from "../Header/Header";
 import styles from "./Login.module.css";
 
 export default function Login() {
@@ -36,10 +37,11 @@ export default function Login() {
 
   return (
     <div className={styles.container}>
+      <Header />
       <div className={styles.card}>
         <div className={styles.header}>
           <div className={styles.icon}>🔐</div>
-          <div className={styles.title}>Вход для админа</div>
+          <div className={styles.title}>Вход для сотрудников</div>
           <div className={styles.subtitle}>
             Для загрузки меню кафетерия
           </div>

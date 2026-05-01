@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useAuth } from "../../contexts/AuthContext";
 import { uploadMenu } from "../../api/adminApi";
+import Header from "../Header/Header";
 import styles from "./AdminUpload.module.css";
 
 function todayISO() {
@@ -38,19 +39,19 @@ export default function AdminUpload() {
 
   return (
     <div className={styles.container}>
-      <div className={styles.topbar}>
+      <Header>
         <div className={styles.userInfo}>
           Вы вошли как <span className={styles.userName}>{user?.login}</span>
         </div>
         <button className={styles.logoutButton} onClick={logout}>
           Выйти
         </button>
-      </div>
+      </Header>
 
       <div className={styles.card}>
         <div className={styles.title}>Загрузка меню</div>
         <div className={styles.subtitle}>
-          Выберите PDF файл с меню, укажите точку и дату
+          Выберите JSON файл с меню, укажите точку и дату
         </div>
 
         <form className={styles.form} onSubmit={handleSubmit}>
@@ -80,14 +81,14 @@ export default function AdminUpload() {
           </div>
 
           <div className={styles.field}>
-            <label className={styles.label}>PDF файл</label>
+            <label className={styles.label}>JSON файл</label>
             <label
               className={`${styles.fileLabel} ${file ? styles.fileLabelActive : ""}`}
             >
               <input
                 className={styles.fileInput}
                 type="file"
-                accept="application/pdf"
+                accept="application/json"
                 onChange={(e) => setFile(e.target.files?.[0] || null)}
                 disabled={submitting}
               />
@@ -98,7 +99,7 @@ export default function AdminUpload() {
                     Выбран файл: <div className={styles.fileName}>{file.name}</div>
                   </>
                 ) : (
-                  <>Нажмите чтобы выбрать PDF</>
+                  <>Нажмите чтобы выбрать JSON</>
                 )}
               </div>
             </label>

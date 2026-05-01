@@ -1,48 +1,47 @@
 .container {
   min-height: 100vh;
   background: linear-gradient(135deg, var(--color-cream) 0%, var(--color-white) 100%);
-  padding: var(--spacing-xl);
 }
 
-.topbar {
-  max-width: 680px;
-  margin: 0 auto var(--spacing-lg);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: var(--spacing-md);
+.container > :global(header) {
+  flex-shrink: 0;
 }
 
 .userInfo {
-  font-size: 0.9rem;
-  color: var(--color-gray-700);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  font-size: 0.85rem;
+  color: var(--color-white);
+  font-weight: var(--font-weight-medium);
+  margin-right: var(--spacing-md);
 }
 
 .userName {
   font-weight: var(--font-weight-semibold);
-  color: var(--color-green);
+  color: var(--color-white);
 }
 
 .logoutButton {
   padding: var(--spacing-xs) var(--spacing-md);
-  background: transparent;
-  border: 1px solid var(--color-gray-300);
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
   border-radius: var(--radius-md);
   font-family: var(--font-family);
   font-size: 0.85rem;
-  color: var(--color-gray-700);
+  color: var(--color-white);
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .logoutButton:hover {
-  background: var(--color-gray-100);
-  border-color: var(--color-gray-500);
+  background: rgba(255, 255, 255, 0.3);
+  border-color: rgba(255, 255, 255, 0.5);
 }
 
 .card {
   max-width: 680px;
-  margin: 0 auto;
+  margin: var(--spacing-xl) auto;
   background: var(--color-white);
   border-radius: var(--radius-lg);
   padding: var(--spacing-2xl);

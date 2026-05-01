@@ -100,7 +100,7 @@ export default function Cart() {
 
                 {/* Бизнес-ланч */}
                 {Object.entries(blGroups).length > 0 && (
-                  <div className={styles.blGroupSection}>
+                  <div className={regularDishes.length > 0 ? styles.blGroupSection : ''}>
                     <div className={styles.blGroupTitle}>Бизнес ланч</div>
                     {Object.entries(blGroups).map(([category, dishes]) => (
                       <div key={category} className={styles.blCategory}>
