@@ -16,6 +16,17 @@
   border-color: var(--color-mustard);
 }
 
+.cardSelected {
+  border-color: var(--color-green);
+  background: var(--color-green-light);
+  box-shadow: 0 0 0 2px var(--color-green);
+}
+
+.cardSelected:hover {
+  border-color: var(--color-green);
+  background: var(--color-green-light);
+}
+
 .mainInfo {
   display: flex;
   flex-direction: column;
@@ -39,6 +50,7 @@
   display: flex;
   gap: var(--spacing-xs);
   align-items: center;
+  flex-wrap: wrap;
 }
 
 .compositionWrapper {
@@ -46,26 +58,21 @@
   align-items: center;
 }
 
-.badgeDietary {
-  background: var(--color-herbal-light);
-  color: #6b7000;
+.badge {
+  background: var(--color-gray-100);
+  color: var(--color-gray-700);
   font-size: 0.65rem;
   font-weight: var(--font-weight-bold);
   padding: 2px 8px;
   border-radius: var(--radius-full);
-  text-transform: uppercase;
+  text-transform: lowercase;
   letter-spacing: 0.3px;
 }
 
-.badgePromo {
-  background: rgba(206, 14, 45, 0.1);
-  color: var(--color-red);
-  font-size: 0.65rem;
-  font-weight: var(--font-weight-bold);
-  padding: 2px 8px;
-  border-radius: var(--radius-full);
-  text-transform: uppercase;
-  letter-spacing: 0.3px;
+.badgeBusinessLunch {
+  background: var(--color-green);
+  color: var(--color-white);
+  text-transform: none;
 }
 
 .meta {

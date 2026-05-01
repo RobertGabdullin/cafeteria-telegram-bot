@@ -65,6 +65,7 @@ export default function Filters({
   ranges,
   onUpdateFilter,
   onReset,
+  availableTags = [],
 }) {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -154,17 +155,28 @@ export default function Filters({
         <div className={styles.divider} />
 
         <div className={styles.group}>
-          <div className={styles.groupLabel}>Дополнительно</div>
-          <label className={styles.checkboxRow}>
-            <input
-              type="checkbox"
-              checked={filters.dietaryOnly}
-              onChange={(e) => onUpdateFilter("dietaryOnly", e.target.checked)}
-            />
-            <span className={styles.checkboxLabel}>
-              Только диетические
-            </span>
-          </label>
+          <div className={styles.groupLabel}>Теги</div>
+          {availableTags.length > 0 ? (
+            availableTags.map((tag) => (
+              <label key={tag} className={styles.checkboxRow}>
+                <input
+                  type="checkbox"
+                  checked={filters.tags?.includes(tag) || false}
+                  onChange={(e) => {
+                    const newTags = e.target.checked
+                      ? [...(filters.tags || []), tag]
+                      : (filters.tags || []).filter((t) => t !== tag);
+                    onUpdateFilter("tags", newTags);
+                  }}
+                />
+                <span className={styles.checkboxLabel}>
+                  {tag}
+                </span>
+              </label>
+            ))
+          ) : (
+            <div className={styles.noTags}>Нет тегов</div>
+          )}
         </div>
 
         <button className={styles.resetButton} onClick={onReset}>

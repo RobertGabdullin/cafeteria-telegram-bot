@@ -9,11 +9,13 @@ import Login from "./components/Login/Login";
 import AdminUpload from "./components/AdminUpload/AdminUpload";
 import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
 import { AuthProvider } from "./contexts/AuthContext";
+import { CartProvider } from "./contexts/CartContext";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <BrowserRouter>
       <AuthProvider>
+        <CartProvider>
         <Routes>
           <Route path="/menu" element={<Home />} />
           <Route path="/menu/:namespace" element={<App />} />
@@ -30,6 +32,7 @@ createRoot(document.getElementById("root")).render(
           <Route path="/" element={<Navigate to="/menu" replace />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
+      </CartProvider>
       </AuthProvider>
     </BrowserRouter>
   </StrictMode>

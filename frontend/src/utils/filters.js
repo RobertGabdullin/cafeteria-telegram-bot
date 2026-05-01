@@ -18,7 +18,12 @@ export function filterDishes(dishes, filters) {
     if (filters.carbsMax !== null && dish.carbs > filters.carbsMax) return false;
     if (filters.carbsMin && dish.carbs < filters.carbsMin) return false;
 
-    if (filters.dietaryOnly && !dish.isDietary) return false;
+    // Фильтрация по тегам: если выбраны теги, блюдо должно содержать хотя бы один из них
+    if (filters.tags && filters.tags.length > 0) {
+      const dishTags = dish.tags || [];
+      const hasMatchingTag = filters.tags.some((tag) => dishTags.includes(tag));
+      if (!hasMatchingTag) return false;
+    }
 
     return true;
   });
@@ -44,4 +49,16 @@ export function getFilterRanges(dishes) {
     fatMax: Math.max(...dishes.map((d) => d.fat)),
     carbsMax: Math.max(...dishes.map((d) => d.carbs)),
   };
+}
+
+// Получить уникальные теги из всех блюд
+export function getAvailableTags(dishes) {
+  if (!dishes || dishes.length === 0) return [];
+  const tagSet = new Set();
+  dishes.forEach((dish) => {
+    if (dish.tags && Array.isArray(dish.tags)) {
+      dish.tags.forEach((tag) => tagSet.add(tag));
+    }
+  });
+  return Array.from(tagSet).sort();
 }

@@ -26,9 +26,8 @@ def parse_pdf_stub(pdf_bytes: bytes) -> dict:
                 "fat": 10,
                 "carbs": 20,
                 "composition": "Ингредиенты из PDF",
-                "isDietary": False,
-                "isPromo": False,
                 "timeRange": {"from": "11:30", "to": "17:30"},
+                "tags": ["диетическое"],
             },
         ],
     }

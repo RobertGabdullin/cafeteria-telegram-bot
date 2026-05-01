@@ -1,17 +1,38 @@
 import styles from "./DishCard.module.css";
 import CompositionTooltip from "../CompositionTooltip/CompositionTooltip";
+import { useCart } from "../../contexts/CartContext";
 
-export default function DishCard({ dish, showPrice = true }) {
+export default function DishCard({ dish, showPrice = true, businessLunchPrice }) {
+  const { toggleDish, toggleBusinessLunchDish, isDishSelected } = useCart();
+  const isSelected = isDishSelected(dish.id);
+
+  const handleClick = () => {
+    if (dish.isBusinessLunch) {
+      toggleBusinessLunchDish(dish, businessLunchPrice);
+    } else {
+      toggleDish(dish);
+    }
+  };
+
   return (
-    <div className={styles.card}>
+    <div 
+      className={`${styles.card} ${isSelected ? styles.cardSelected : ""}`}
+      onClick={handleClick}
+    >
       <div className={styles.mainInfo}>
         <div className={styles.nameRow}>
           <span className={styles.name}>{dish.name}</span>
           <div className={styles.badges}>
-            {dish.isDietary && (
-              <span className={styles.badgeDietary}>Диетическое</span>
+            {dish.isBusinessLunch && (
+              <span className={`${styles.badge} ${styles.badgeBusinessLunch}`}>
+                Бизнес ланч
+              </span>
             )}
-            {dish.isPromo && <span className={styles.badgePromo}>Акция</span>}
+            {dish.tags && dish.tags.map((tag) => (
+              <span key={tag} className={styles.badge}>
+                {tag}
+              </span>
+            ))}
           </div>
           <div className={styles.compositionWrapper}>
             <CompositionTooltip composition={dish.composition} />

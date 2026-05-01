@@ -45,3 +45,35 @@
   flex-direction: column;
   gap: var(--spacing-sm);
 }
+
+.businessLunchPrice {
+  font-size: 0.95rem;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-green);
+  margin-left: var(--spacing-sm);
+  padding: 2px 8px;
+  background: var(--color-green-light);
+  border-radius: var(--radius-full);
+}
+
+.blSubcategory {
+  margin-top: var(--spacing-md);
+  padding: var(--spacing-md);
+  background: var(--color-gray-50);
+  border-radius: var(--radius-md);
+  border: 1px dashed var(--color-mustard);
+}
+
+.blSubcategoryTitle {
+  font-size: 0.95rem;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-gray-700);
+  margin-bottom: var(--spacing-sm);
+}
+
+.blSelectOne {
+  font-size: 0.85rem;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-gray-500);
+  font-style: italic;
+}

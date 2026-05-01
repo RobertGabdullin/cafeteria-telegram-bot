@@ -9,6 +9,7 @@ import FilterBar from "./components/FilterBar/FilterBar";
 import Filters from "./components/Filters/Filters";
 import DishList from "./components/DishList/DishList";
 import BusinessLunch from "./components/BusinessLunch/BusinessLunch";
+import Cart from "./components/Cart/Cart";
 
 export default function App() {
   const { namespace } = useParams();
@@ -27,6 +28,7 @@ export default function App() {
     filteredDishes,
     filterRanges,
     isBusinessLunch,
+    availableTags,
   } = useMenu(namespace);
 
   // Извлечение уникальных категорий из блюд (category теперь это имя)
@@ -156,12 +158,13 @@ export default function App() {
       />
 
       <div className={styles.layout}>
-        <Filters
-          filters={filters}
-          ranges={filterRanges}
-          onUpdateFilter={updateFilter}
-          onReset={resetFilters}
-        />
+      <Filters
+        filters={filters}
+        ranges={filterRanges}
+        onUpdateFilter={updateFilter}
+        onReset={resetFilters}
+        availableTags={availableTags}
+      />
 
         <div className={styles.mainContent}>
           <div className={styles.resultsInfo}>
@@ -172,22 +175,17 @@ export default function App() {
             </span>
           </div>
 
-          {isBusinessLunch && menu.businessLunch ? (
-            <BusinessLunch
-              businessLunch={menu.businessLunch}
-              filteredItems={filteredDishes}
-              categories={categories}
-            />
-          ) : (
-            <DishList
-              dishes={filteredDishes}
-              categories={categories}
-              showPrice={true}
-              groupByCategory={activeCategory === "all"}
-            />
-          )}
+          <DishList
+            dishes={filteredDishes}
+            categories={categories}
+            showPrice={true}
+            groupByCategory={activeCategory === "all"}
+            isBusinessLunchCategory={isBusinessLunch}
+            businessLunchPrice={menu?.businessLunch?.price}
+          />
         </div>
       </div>
+      <Cart />
     </div>
   );
 }
