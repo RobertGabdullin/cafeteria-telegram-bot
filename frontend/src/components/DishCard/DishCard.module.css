@@ -38,6 +38,12 @@
 .badges {
   display: flex;
   gap: var(--spacing-xs);
+  align-items: center;
+}
+
+.compositionWrapper {
+  display: flex;
+  align-items: center;
 }
 
 .badgeDietary {
