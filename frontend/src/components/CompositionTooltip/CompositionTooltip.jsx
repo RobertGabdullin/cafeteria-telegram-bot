@@ -1,21 +1,13 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import styles from "./CompositionTooltip.module.css";
 
-export default function CompositionTooltip({ composition, onBlockClicks }) {
+export default function CompositionTooltip({ composition }) {
   const [visible, setVisible] = useState(false);
   const wrapperRef = useRef(null);
-  const blockTimeoutRef = useRef(null);
 
   const close = useCallback(() => {
     setVisible(false);
   }, []);
-
-  // Функция для блокировки кликов на 0.3 секунды
-  const blockClicksFor300ms = useCallback(() => {
-    if (onBlockClicks) {
-      onBlockClicks();
-    }
-  }, [onBlockClicks]);
 
   // Закрытие при скролле (мобильные)
   useEffect(() => {
@@ -25,21 +17,14 @@ export default function CompositionTooltip({ composition, onBlockClicks }) {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [visible]);
 
-  // Закрытие по клику вне компонента (только для десктопа)
+  // Закрытие по клику вне компонента
   useEffect(() => {
     if (!visible) return;
-    if (window.innerWidth <= 768) return; // На мобильных используем только overlay
 
     const handleClickOutside = (e) => {
-      // Если клик был по overlay - уже обработано, ничего не делаем
-      if (e.target.classList.contains(styles.overlay)) {
-        return;
-      }
-      // Если клик внутри компонента - игнорируем
       if (wrapperRef.current && wrapperRef.current.contains(e.target)) {
         return;
       }
-      // Иначе закрываем tooltip
       setVisible(false);
     };
 
@@ -60,28 +45,8 @@ export default function CompositionTooltip({ composition, onBlockClicks }) {
 
   const handleOverlayClick = (e) => {
     e.stopPropagation();
-    e.stopImmediatePropagation();
-    e.preventDefault();
     setVisible(false);
-    blockClicksFor300ms();
-    return false;
   };
-
-  const handleOverlayTouchStart = (e) => {
-    e.stopPropagation();
-    e.stopImmediatePropagation();
-    e.preventDefault();
-    return false;
-  };
-
-  // Очистка таймера при размонтировании
-  useEffect(() => {
-    return () => {
-      if (blockTimeoutRef.current) {
-        clearTimeout(blockTimeoutRef.current);
-      }
-    };
-  }, []);
 
   return (
     <div
@@ -103,12 +68,7 @@ export default function CompositionTooltip({ composition, onBlockClicks }) {
       </div>
       {visible && (
         <>
-          <div 
-            className={styles.overlay} 
-            onClick={handleOverlayClick} 
-            onTouchEnd={handleOverlayClick}
-            onTouchStart={handleOverlayTouchStart}
-          />
+          <div className={styles.overlay} onClick={handleOverlayClick} onTouchEnd={handleOverlayClick} />
           <div className={styles.tooltip} onClick={handleTooltipClick}>
             <div className={styles.tooltipLabel}>Состав</div>
             {composition}
