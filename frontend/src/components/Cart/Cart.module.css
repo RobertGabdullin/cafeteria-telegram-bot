@@ -132,6 +132,23 @@
   padding: 16px 20px;
 }
 
+/* Группа категорий */
+.categoryGroup {
+  margin-bottom: 16px;
+}
+
+.categoryGroup:last-child {
+  margin-bottom: 0;
+}
+
+.categoryName {
+  font-size: 0.9rem;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-gray-600);
+  margin-bottom: 8px;
+  text-transform: capitalize;
+}
+
 .cartItem {
   display: flex;
   align-items: center;

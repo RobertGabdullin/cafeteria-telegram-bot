@@ -12,16 +12,17 @@ export default function Cart() {
     toggleBusinessLunchDish,
   } = useCart();
 
-  // Группируем блюда бизнес-ланча по категориям
+  // Группируем блюда по категориям
   const blGroups = {};
-  const regularDishes = [];
+  const regularGroups = {};
 
   selectedDishes.forEach((dish) => {
     if (dish.isBusinessLunch) {
       if (!blGroups[dish.category]) blGroups[dish.category] = [];
       blGroups[dish.category].push(dish);
     } else {
-      regularDishes.push(dish);
+      if (!regularGroups[dish.category]) regularGroups[dish.category] = [];
+      regularGroups[dish.category].push(dish);
     }
   });
 
@@ -44,7 +45,7 @@ export default function Cart() {
         className={styles.cartButton}
         onClick={() => setIsCartOpen(true)}
       >
-        <span className={styles.cartIcon}>🛒</span>
+        <span className={styles.cartIcon}>🍽️</span>
         {cartTotals.itemCount > 0 && (
           <span className={styles.cartBadge}>{cartTotals.itemCount}</span>
         )}
@@ -73,34 +74,39 @@ export default function Cart() {
 
           {selectedDishes.length === 0 ? (
             <div className={styles.emptyCart}>
-              <span className={styles.emptyIcon}>🛒</span>
+              <span className={styles.emptyIcon}>🍽️</span>
               <p>Корзина пуста</p>
             </div>
           ) : (
             <>
               <div className={styles.cartItems}>
-                {/* Обычные блюда */}
-                {regularDishes.length > 0 && regularDishes.map((dish) => (
-                  <div
-                    key={dish.id}
-                    className={styles.cartItem}
-                    onClick={() => handleDishClick(dish)}
-                  >
-                    <div className={styles.cartItemInfo}>
-                      <span className={styles.cartItemName}>{dish.name}</span>
-                    </div>
-                    <div className={styles.cartItemDetails}>
-                      <span className={styles.cartItemWeight}>{dish.weight} г</span>
-                      <span className={styles.cartItemCalories}>{dish.calories} ккал</span>
-                      <span className={styles.cartItemPrice}>{dish.price} ₽</span>
-                    </div>
-                    <button className={styles.removeItem}>✕</button>
+                {/* Обычные блюда по категориям */}
+                {Object.entries(regularGroups).map(([category, dishes]) => (
+                  <div key={category} className={styles.categoryGroup}>
+                    <div className={styles.categoryName}>{category}</div>
+                    {dishes.map((dish) => (
+                      <div
+                        key={dish.id}
+                        className={styles.cartItem}
+                        onClick={() => handleDishClick(dish)}
+                      >
+                        <div className={styles.cartItemInfo}>
+                          <span className={styles.cartItemName}>{dish.name}</span>
+                        </div>
+                        <div className={styles.cartItemDetails}>
+                          <span className={styles.cartItemWeight}>{dish.weight} г</span>
+                          <span className={styles.cartItemCalories}>{dish.calories} ккал</span>
+                          <span className={styles.cartItemPrice}>{dish.price} ₽</span>
+                        </div>
+                        <button className={styles.removeItem}>✕</button>
+                      </div>
+                    ))}
                   </div>
                 ))}
 
                 {/* Бизнес-ланч */}
                 {Object.entries(blGroups).length > 0 && (
-                  <div className={regularDishes.length > 0 ? styles.blGroupSection : ''}>
+                  <div className={Object.keys(regularGroups).length > 0 ? styles.blGroupSection : ''}>
                     <div className={styles.blGroupTitle}>Бизнес ланч</div>
                     {Object.entries(blGroups).map(([category, dishes]) => (
                       <div key={category} className={styles.blCategory}>
