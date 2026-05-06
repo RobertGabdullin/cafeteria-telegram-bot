@@ -1,9 +1,11 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import styles from "./CompositionTooltip.module.css";
+import { useCart } from "../../contexts/CartContext";
 
 export default function CompositionTooltip({ composition }) {
   const [visible, setVisible] = useState(false);
   const wrapperRef = useRef(null);
+  const { blockActions } = useCart();
 
   const close = useCallback(() => {
     setVisible(false);
@@ -46,6 +48,8 @@ export default function CompositionTooltip({ composition }) {
   const handleOverlayClick = (e) => {
     e.stopPropagation();
     setVisible(false);
+    // Блокируем добавление блюд на 300мс после закрытия
+    blockActions(300);
   };
 
   return (
