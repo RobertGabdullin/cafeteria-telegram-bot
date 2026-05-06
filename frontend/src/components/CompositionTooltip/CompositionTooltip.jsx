@@ -17,14 +17,21 @@ export default function CompositionTooltip({ composition }) {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [visible]);
 
-  // Закрытие по клику вне компонента
+  // Закрытие по клику вне компонента (только для десктопа)
   useEffect(() => {
     if (!visible) return;
+    if (window.innerWidth <= 768) return; // На мобильных используем только overlay
 
     const handleClickOutside = (e) => {
+      // Если клик был по overlay - уже обработано, ничего не делаем
+      if (e.target.classList.contains(styles.overlay)) {
+        return;
+      }
+      // Если клик внутри компонента - игнорируем
       if (wrapperRef.current && wrapperRef.current.contains(e.target)) {
         return;
       }
+      // Иначе закрываем tooltip
       setVisible(false);
     };
 
@@ -45,7 +52,17 @@ export default function CompositionTooltip({ composition }) {
 
   const handleOverlayClick = (e) => {
     e.stopPropagation();
+    e.stopImmediatePropagation();
+    e.preventDefault();
     setVisible(false);
+    return false;
+  };
+
+  const handleOverlayTouchStart = (e) => {
+    e.stopPropagation();
+    e.stopImmediatePropagation();
+    e.preventDefault();
+    return false;
   };
 
   return (
@@ -68,7 +85,12 @@ export default function CompositionTooltip({ composition }) {
       </div>
       {visible && (
         <>
-          <div className={styles.overlay} onClick={handleOverlayClick} onTouchEnd={handleOverlayClick} />
+          <div 
+            className={styles.overlay} 
+            onClick={handleOverlayClick} 
+            onTouchEnd={handleOverlayClick}
+            onTouchStart={handleOverlayTouchStart}
+          />
           <div className={styles.tooltip} onClick={handleTooltipClick}>
             <div className={styles.tooltipLabel}>Состав</div>
             {composition}
