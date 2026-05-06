@@ -33,6 +33,11 @@ export default function CompositionTooltip({ composition }) {
     e.stopPropagation();
   };
 
+  const handleOverlayClick = (e) => {
+    e.stopPropagation();
+    close();
+  };
+
   return (
     <div
       className={styles.wrapper}
@@ -50,7 +55,7 @@ export default function CompositionTooltip({ composition }) {
       </div>
       {visible && (
         <>
-          <div className={styles.overlay} onClick={close} onTouchStart={close} />
+          <div className={styles.overlay} onClick={handleOverlayClick} />
           <div className={styles.tooltip} onClick={handleTooltipClick} onTouchStart={handleTooltipClick}>
             <div className={styles.tooltipLabel}>Состав</div>
             {composition}
