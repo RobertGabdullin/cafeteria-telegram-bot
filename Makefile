@@ -3,6 +3,7 @@
 up:
 	docker-compose down -v
 	docker-compose up -d --wait
+	sleep 2
 	python ./backend/seed.py
 	cd frontend && npm run build
 	cd backend && uvicorn main:app --reload --port 8000
