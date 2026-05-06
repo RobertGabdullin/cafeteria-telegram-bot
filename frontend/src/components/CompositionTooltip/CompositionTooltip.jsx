@@ -4,6 +4,7 @@ import styles from "./CompositionTooltip.module.css";
 export default function CompositionTooltip({ composition }) {
   const [visible, setVisible] = useState(false);
   const touchHandled = useRef(false);
+  const touchTimeout = useRef(null);
 
   const close = useCallback(() => {
     setVisible(false);
@@ -18,14 +19,35 @@ export default function CompositionTooltip({ composition }) {
     return () => window.removeEventListener("scroll", close);
   }, [visible, close]);
 
+  // Очистка таймера при размонтировании
+  useEffect(() => {
+    return () => {
+      if (touchTimeout.current) {
+        clearTimeout(touchTimeout.current);
+      }
+    };
+  }, []);
+
   const handleTouchStart = (e) => {
     e.preventDefault();
-    setVisible(true);
     touchHandled.current = true;
+    setVisible((v) => !v);
+    
+    // Сбрасываем флаг через 300мс, чтобы следующий клик работал
+    if (touchTimeout.current) {
+      clearTimeout(touchTimeout.current);
+    }
+    touchTimeout.current = setTimeout(() => {
+      touchHandled.current = false;
+    }, 300);
   };
 
   const handleClick = (e) => {
     e.stopPropagation();
+    // Игнорируем клик, если он был вызван после touch события
+    if (touchHandled.current) {
+      return;
+    }
     setVisible((v) => !v);
   };
 
@@ -55,7 +77,7 @@ export default function CompositionTooltip({ composition }) {
       </div>
       {visible && (
         <>
-          <div className={styles.overlay} onClick={handleOverlayClick} />
+          <div className={styles.overlay} onClick={handleOverlayClick} onTouchStart={handleOverlayClick} />
           <div className={styles.tooltip} onClick={handleTooltipClick} onTouchStart={handleTooltipClick}>
             <div className={styles.tooltipLabel}>Состав</div>
             {composition}
