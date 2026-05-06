@@ -92,7 +92,7 @@
     padding: var(--spacing-lg);
     font-size: 0.95rem;
     line-height: 1.6;
-    pointer-events: none;
+    pointer-events: auto;
     z-index: 50;
   }
 
