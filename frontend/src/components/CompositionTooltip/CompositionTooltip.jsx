@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import styles from "./CompositionTooltip.module.css";
 
-export default function CompositionTooltip({ composition }) {
+export default function CompositionTooltip({ composition, onBlockClicks }) {
   const [visible, setVisible] = useState(false);
   const wrapperRef = useRef(null);
 
@@ -46,6 +46,10 @@ export default function CompositionTooltip({ composition }) {
   const handleOverlayClick = (e) => {
     e.stopPropagation();
     setVisible(false);
+    // Блокируем клики на карточке на 300мс после закрытия
+    if (onBlockClicks) {
+      onBlockClicks();
+    }
   };
 
   return (
