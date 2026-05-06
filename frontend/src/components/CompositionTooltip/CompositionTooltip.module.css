@@ -82,6 +82,8 @@
     bottom: 0;
     background: rgba(0, 0, 0, 0.4);
     z-index: 49;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: none;
   }
 
   .tooltip {

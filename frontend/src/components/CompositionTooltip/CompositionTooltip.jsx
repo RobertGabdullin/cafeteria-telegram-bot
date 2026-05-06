@@ -4,6 +4,7 @@ import styles from "./CompositionTooltip.module.css";
 export default function CompositionTooltip({ composition, onBlockClicks }) {
   const [visible, setVisible] = useState(false);
   const wrapperRef = useRef(null);
+  const blockSent = useRef(false);
 
   const close = useCallback(() => {
     setVisible(false);
@@ -45,11 +46,38 @@ export default function CompositionTooltip({ composition, onBlockClicks }) {
 
   const handleOverlayClick = (e) => {
     e.stopPropagation();
+    e.preventDefault();
     setVisible(false);
     // Блокируем клики на карточке на 300мс после закрытия
-    if (onBlockClicks) {
+    if (onBlockClicks && !blockSent.current) {
+      blockSent.current = true;
       onBlockClicks();
+      setTimeout(() => {
+        blockSent.current = false;
+      }, 350);
     }
+  };
+
+  // Для мобильных - блокируем сразу при касании overlay
+  const handleOverlayTouchStart = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    e.stopImmediatePropagation();
+    // Блокируем клики немедленно
+    if (onBlockClicks && !blockSent.current) {
+      blockSent.current = true;
+      onBlockClicks();
+      setTimeout(() => {
+        blockSent.current = false;
+      }, 500);
+    }
+    setVisible(false);
+  };
+
+  const handleOverlayTouchEnd = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    e.stopImmediatePropagation();
   };
 
   return (
@@ -72,7 +100,12 @@ export default function CompositionTooltip({ composition, onBlockClicks }) {
       </div>
       {visible && (
         <>
-          <div className={styles.overlay} onClick={handleOverlayClick} onTouchEnd={handleOverlayClick} />
+          <div 
+            className={styles.overlay} 
+            onClick={handleOverlayClick}
+            onTouchStart={handleOverlayTouchStart}
+            onTouchEnd={handleOverlayTouchEnd}
+          />
           <div className={styles.tooltip} onClick={handleTooltipClick}>
             <div className={styles.tooltipLabel}>Состав</div>
             {composition}

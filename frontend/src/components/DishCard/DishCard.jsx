@@ -16,7 +16,7 @@ export default function DishCard({ dish, showPrice = true, businessLunchPrice })
     }
     blockTimeoutRef.current = setTimeout(() => {
       isBlocked.current = false;
-    }, 300);
+    }, 600);
   };
 
   const handleClick = () => {
