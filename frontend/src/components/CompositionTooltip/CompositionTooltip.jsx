@@ -57,7 +57,15 @@ export default function CompositionTooltip({ composition }) {
 
   const handleOverlayClick = (e) => {
     e.stopPropagation();
+    e.preventDefault();
+    e.stopImmediatePropagation();
     close();
+    return false;
+  };
+
+  const handleWrapperClick = (e) => {
+    e.stopPropagation();
+    handleClick(e);
   };
 
   return (
@@ -66,7 +74,7 @@ export default function CompositionTooltip({ composition }) {
       onMouseEnter={() => setVisible(true)}
       onMouseLeave={() => setVisible(false)}
       onTouchStart={handleTouchStart}
-      onClick={handleClick}
+      onClick={handleWrapperClick}
     >
       <div
         className={styles.icon}

@@ -34,7 +34,7 @@ export default function DishCard({ dish, showPrice = true, businessLunchPrice })
               </span>
             ))}
           </div>
-          <div className={styles.compositionWrapper}>
+          <div className={styles.compositionWrapper} onClick={(e) => e.stopPropagation()}>
             <CompositionTooltip composition={dish.composition} />
           </div>
         </div>
