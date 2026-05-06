@@ -1,3 +1,4 @@
+import { useState, useCallback } from "react";
 import styles from "./DishCard.module.css";
 import CompositionTooltip from "../CompositionTooltip/CompositionTooltip";
 import { useCart } from "../../contexts/CartContext";
@@ -5,8 +6,19 @@ import { useCart } from "../../contexts/CartContext";
 export default function DishCard({ dish, showPrice = true, businessLunchPrice }) {
   const { toggleDish, toggleBusinessLunchDish, isDishSelected } = useCart();
   const isSelected = isDishSelected(dish.id);
+  const [isClickBlocked, setIsClickBlocked] = useState(false);
+
+  const handleBlockClicks = useCallback(() => {
+    setIsClickBlocked(true);
+    setTimeout(() => {
+      setIsClickBlocked(false);
+    }, 300);
+  }, []);
 
   const handleClick = () => {
+    if (isClickBlocked) {
+      return;
+    }
     if (dish.isBusinessLunch) {
       toggleBusinessLunchDish(dish, businessLunchPrice);
     } else {
@@ -35,7 +47,7 @@ export default function DishCard({ dish, showPrice = true, businessLunchPrice })
             ))}
           </div>
           <div className={styles.compositionWrapper} onClick={(e) => e.stopPropagation()}>
-            <CompositionTooltip composition={dish.composition} />
+            <CompositionTooltip composition={dish.composition} onBlockClicks={handleBlockClicks} />
           </div>
         </div>
 

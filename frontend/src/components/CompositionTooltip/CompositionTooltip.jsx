@@ -1,13 +1,21 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import styles from "./CompositionTooltip.module.css";
 
-export default function CompositionTooltip({ composition }) {
+export default function CompositionTooltip({ composition, onBlockClicks }) {
   const [visible, setVisible] = useState(false);
   const wrapperRef = useRef(null);
+  const blockTimeoutRef = useRef(null);
 
   const close = useCallback(() => {
     setVisible(false);
   }, []);
+
+  // Функция для блокировки кликов на 0.3 секунды
+  const blockClicksFor300ms = useCallback(() => {
+    if (onBlockClicks) {
+      onBlockClicks();
+    }
+  }, [onBlockClicks]);
 
   // Закрытие при скролле (мобильные)
   useEffect(() => {
@@ -55,6 +63,7 @@ export default function CompositionTooltip({ composition }) {
     e.stopImmediatePropagation();
     e.preventDefault();
     setVisible(false);
+    blockClicksFor300ms();
     return false;
   };
 
@@ -64,6 +73,15 @@ export default function CompositionTooltip({ composition }) {
     e.preventDefault();
     return false;
   };
+
+  // Очистка таймера при размонтировании
+  useEffect(() => {
+    return () => {
+      if (blockTimeoutRef.current) {
+        clearTimeout(blockTimeoutRef.current);
+      }
+    };
+  }, []);
 
   return (
     <div
