@@ -3,51 +3,39 @@ import styles from "./CompositionTooltip.module.css";
 
 export default function CompositionTooltip({ composition }) {
   const [visible, setVisible] = useState(false);
-  const touchHandled = useRef(false);
-  const touchTimeout = useRef(null);
+  const wrapperRef = useRef(null);
 
   const close = useCallback(() => {
     setVisible(false);
-    touchHandled.current = false;
   }, []);
 
   // Закрытие при скролле (мобильные)
   useEffect(() => {
     if (!visible) return;
+    const handleScroll = () => setVisible(false);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [visible]);
 
-    window.addEventListener("scroll", close, { passive: true });
-    return () => window.removeEventListener("scroll", close);
-  }, [visible, close]);
-
-  // Очистка таймера при размонтировании
+  // Закрытие по клику вне компонента
   useEffect(() => {
-    return () => {
-      if (touchTimeout.current) {
-        clearTimeout(touchTimeout.current);
+    if (!visible) return;
+
+    const handleClickOutside = (e) => {
+      if (wrapperRef.current && wrapperRef.current.contains(e.target)) {
+        return;
       }
+      setVisible(false);
     };
-  }, []);
 
-  const handleTouchStart = (e) => {
+    // Используем capture phase чтобы обработать клик раньше чем он дойдет до карточки
+    document.addEventListener("click", handleClickOutside, true);
+    return () => document.removeEventListener("click", handleClickOutside, true);
+  }, [visible]);
+
+  const handleIconClick = (e) => {
     e.preventDefault();
-    touchHandled.current = true;
-    setVisible((v) => !v);
-    
-    // Сбрасываем флаг через 300мс, чтобы следующий клик работал
-    if (touchTimeout.current) {
-      clearTimeout(touchTimeout.current);
-    }
-    touchTimeout.current = setTimeout(() => {
-      touchHandled.current = false;
-    }, 300);
-  };
-
-  const handleClick = (e) => {
     e.stopPropagation();
-    // Игнорируем клик, если он был вызван после touch события
-    if (touchHandled.current) {
-      return;
-    }
     setVisible((v) => !v);
   };
 
@@ -57,36 +45,31 @@ export default function CompositionTooltip({ composition }) {
 
   const handleOverlayClick = (e) => {
     e.stopPropagation();
-    e.preventDefault();
-    e.stopImmediatePropagation();
-    close();
-    return false;
-  };
-
-  const handleWrapperClick = (e) => {
-    e.stopPropagation();
-    handleClick(e);
+    setVisible(false);
   };
 
   return (
     <div
+      ref={wrapperRef}
       className={styles.wrapper}
       onMouseEnter={() => setVisible(true)}
       onMouseLeave={() => setVisible(false)}
-      onTouchStart={handleTouchStart}
-      onClick={handleWrapperClick}
     >
       <div
         className={styles.icon}
-        onClick={handleClick}
-        onTouchStart={handleTouchStart}
+        onClick={handleIconClick}
+        onTouchEnd={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          setVisible((v) => !v);
+        }}
       >
         i
       </div>
       {visible && (
         <>
-          <div className={styles.overlay} onClick={handleOverlayClick} onTouchStart={handleOverlayClick} />
-          <div className={styles.tooltip} onClick={handleTooltipClick} onTouchStart={handleTooltipClick}>
+          <div className={styles.overlay} onClick={handleOverlayClick} onTouchEnd={handleOverlayClick} />
+          <div className={styles.tooltip} onClick={handleTooltipClick}>
             <div className={styles.tooltipLabel}>Состав</div>
             {composition}
           </div>
