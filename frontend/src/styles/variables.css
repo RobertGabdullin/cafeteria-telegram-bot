@@ -13,6 +13,10 @@
   --color-herbal: #b8be14;
   --color-herbal-light: rgba(184, 190, 20, 0.12);
   --color-purple: #c6669f;
+  
+  /* Primary */
+  --color-primary: #56a8e6;
+  --color-primary-dark: #4a94cc;
 
   /* Neutrals */
   --color-white: #ffffff;

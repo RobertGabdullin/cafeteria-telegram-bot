@@ -6,10 +6,13 @@ import { useMenu } from "./hooks/useMenu";
 import { filterDishes } from "./utils/filters";
 import Header from "./components/Header/Header";
 import FilterBar from "./components/FilterBar/FilterBar";
+import TrayAssembly from "./components/TrayAssembly/TrayAssembly";
 import Filters from "./components/Filters/Filters";
 import DishList from "./components/DishList/DishList";
 import BusinessLunch from "./components/BusinessLunch/BusinessLunch";
 import Cart from "./components/Cart/Cart";
+
+import { useCart } from "./contexts/CartContext";
 
 export default function App() {
   const { namespace } = useParams();
@@ -30,6 +33,40 @@ export default function App() {
     isBusinessLunch,
     availableTags,
   } = useMenu(namespace);
+  
+  const { toggleDish, toggleBusinessLunchDish, clearCart } = useCart();
+
+  // Обработка выбора блюд через "Сбор подноса"
+  const handleTraySelect = (selectedDishIds) => {
+    // Очищаем текущий выбор
+    clearCart();
+    
+    // Выбираем блюда по ID (заглушка - всегда выбираем одни и те же)
+    // В будущем здесь будет логика подбора блюд по промпту
+    if (menu) {
+      // Собираем все доступные блюда (включая бизнес-ланч)
+      const allDishes = [...menu.dishes];
+      if (menu.businessLunch) {
+        allDishes.push(...menu.businessLunch.items.map(item => ({
+          ...item,
+          isBusinessLunch: true,
+          businessLunchPrice: menu.businessLunch.price,
+        })));
+      }
+      
+      // Находим блюда с указанными ID и добавляем их в корзину
+      selectedDishIds.forEach((id) => {
+        const dish = allDishes.find((d) => d.id === id);
+        if (dish) {
+          if (dish.isBusinessLunch) {
+            toggleBusinessLunchDish(dish, dish.businessLunchPrice);
+          } else {
+            toggleDish(dish);
+          }
+        }
+      });
+    }
+  };
 
   // Извлечение уникальных категорий из блюд (category теперь это имя)
   const categories = useMemo(() => {
@@ -158,13 +195,17 @@ export default function App() {
       />
 
       <div className={styles.layout}>
-      <Filters
-        filters={filters}
-        ranges={filterRanges}
-        onUpdateFilter={updateFilter}
-        onReset={resetFilters}
-        availableTags={availableTags}
-      />
+        <div className={styles.sidebarContainer}>
+          <Filters
+            filters={filters}
+            ranges={filterRanges}
+            onUpdateFilter={updateFilter}
+            onReset={resetFilters}
+            availableTags={availableTags}
+          />
+
+          <TrayAssembly onTraySelect={handleTraySelect} />
+        </div>
 
         <div className={styles.mainContent}>
           <div className={styles.resultsInfo}>
