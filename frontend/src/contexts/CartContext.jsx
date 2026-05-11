@@ -1,36 +1,13 @@
-import { createContext, useContext, useState, useCallback, useMemo, useRef } from "react";
+import { createContext, useContext, useState, useCallback, useMemo } from "react";
 
 const CartContext = createContext(null);
 
 export function CartProvider({ children }) {
   const [selectedDishes, setSelectedDishes] = useState([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
-  const [isBlocked, setIsBlocked] = useState(false);
-  const blockTimeoutRef = useRef(null);
-
-  // Блокировка добавления блюд на короткое время
-  const blockActions = useCallback((duration = 300) => {
-    setIsBlocked(true);
-    if (blockTimeoutRef.current) {
-      clearTimeout(blockTimeoutRef.current);
-    }
-    blockTimeoutRef.current = setTimeout(() => {
-      setIsBlocked(false);
-    }, duration);
-  }, []);
-
-  // Очистка таймера при размонтировании
-  useMemo(() => {
-    return () => {
-      if (blockTimeoutRef.current) {
-        clearTimeout(blockTimeoutRef.current);
-      }
-    };
-  }, []);
 
   // Добавление/удаление блюда из корзины
   const toggleDish = useCallback((dish) => {
-    if (isBlocked) return;
     setSelectedDishes((prev) => {
       const exists = prev.find((d) => d.id === dish.id);
       if (exists) {
@@ -39,7 +16,7 @@ export function CartProvider({ children }) {
         return [...prev, dish];
       }
     });
-  }, [isBlocked]);
+  }, []);
 
   // Проверка, выбрано ли блюдо
   const isDishSelected = useCallback((dishId) => {
@@ -48,7 +25,6 @@ export function CartProvider({ children }) {
 
   // Выбор блюда из бизнес-ланча (только одно из категории)
   const toggleBusinessLunchDish = useCallback((dish, blPrice) => {
-    if (isBlocked) return;
     setSelectedDishes((prev) => {
       const exists = prev.find((d) => d.id === dish.id);
       if (exists) {
@@ -61,7 +37,7 @@ export function CartProvider({ children }) {
         return [...filtered, dish];
       }
     });
-  }, [isBlocked]);
+  }, []);
 
   // Очистка корзины
   const clearCart = useCallback(() => {
@@ -77,7 +53,6 @@ export function CartProvider({ children }) {
         totalProtein: 0,
         totalFat: 0,
         totalCarbs: 0,
-        totalWeight: 0,
         itemCount: 0,
       };
     }
@@ -87,7 +62,6 @@ export function CartProvider({ children }) {
     let totalProtein = 0;
     let totalFat = 0;
     let totalCarbs = 0;
-    let totalWeight = 0;
 
     const hasBusinessLunch = selectedDishes.some((d) => d.isBusinessLunch);
     let businessLunchAdded = false;
@@ -97,7 +71,6 @@ export function CartProvider({ children }) {
       totalProtein += dish.protein || 0;
       totalFat += dish.fat || 0;
       totalCarbs += dish.carbs || 0;
-      totalWeight += dish.weight || 0;
 
       if (dish.isBusinessLunch) {
         if (!businessLunchAdded) {
@@ -115,7 +88,6 @@ export function CartProvider({ children }) {
       totalProtein,
       totalFat,
       totalCarbs,
-      totalWeight,
       itemCount: selectedDishes.length,
     };
   }, [selectedDishes]);
@@ -129,7 +101,6 @@ export function CartProvider({ children }) {
     isDishSelected,
     clearCart,
     cartTotals,
-    blockActions,
   };
 
   return (

@@ -1,110 +1,22 @@
-.wrapper {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  touch-action: manipulation;
+.composition {
+  width: 100%;
+  margin-top: var(--spacing-xs);
+  padding-top: var(--spacing-xs);
+  border-top: 1px solid var(--color-gray-200);
 }
 
-.icon {
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
-  background: var(--color-green-light);
-  color: var(--color-green);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.75rem;
+.compositionLabel {
+  font-size: 0.65rem;
   font-weight: var(--font-weight-bold);
-  cursor: help;
-  transition: all 0.2s ease;
-  border: 1.5px solid transparent;
-  flex-shrink: 0;
-  user-select: none;
-  -webkit-tap-highlight-color: transparent;
-}
-
-.icon:hover {
-  background: var(--color-green);
-  color: var(--color-white);
-  border-color: var(--color-green);
-}
-
-.tooltip {
-  position: absolute;
-  bottom: calc(100% + 8px);
-  left: 50%;
-  transform: translateX(-50%);
-  background: var(--color-green);
-  color: var(--color-white);
-  padding: var(--spacing-sm) var(--spacing-md);
-  border-radius: var(--radius-md);
-  font-size: 0.8rem;
-  font-weight: var(--font-weight-regular);
-  line-height: 1.4;
-  width: 260px;
-  max-width: calc(100vw - 32px);
-  box-shadow: var(--shadow-lg);
-  z-index: 50;
-  pointer-events: none;
-}
-
-.tooltip::after {
-  content: "";
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  transform: translateX(-50%);
-  border: 6px solid transparent;
-  border-top-color: var(--color-green);
-}
-
-.tooltipLabel {
-  font-weight: var(--font-weight-semibold);
-  color: var(--color-mustard);
-  font-size: 0.7rem;
+  color: var(--color-gray-400);
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin-bottom: 4px;
+  letter-spacing: 0.8px;
+  margin-bottom: 6px;
 }
 
-.overlay {
-  display: none;
-}
-
-@media (max-width: 768px) {
-  .overlay {
-    display: block;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.4);
-    z-index: 49;
-  }
-
-  .tooltip {
-    position: fixed;
-    bottom: auto;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: calc(100vw - 32px);
-    max-width: 360px;
-    padding: var(--spacing-lg);
-    font-size: 0.95rem;
-    line-height: 1.6;
-    pointer-events: auto;
-    z-index: 50;
-  }
-
-  .tooltip::after {
-    display: none;
-  }
-
-  .tooltipLabel {
-    font-size: 0.8rem;
-    margin-bottom: var(--spacing-sm);
-  }
+.compositionText {
+  font-size: 0.8rem;
+  line-height: 1.5;
+  color: var(--color-gray-600);
+  font-style: italic;
 }

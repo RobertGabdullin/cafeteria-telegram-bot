@@ -135,10 +135,6 @@ export default function Cart() {
 
               <div className={styles.cartTotals}>
                 <div className={styles.totalsRow}>
-                  <span>Вес:</span>
-                  <span className={styles.totalValue}>{cartTotals.totalWeight} г</span>
-                </div>
-                <div className={styles.totalsRow}>
                   <span>Ккал:</span>
                   <span className={styles.totalValue}>{cartTotals.totalCalories}</span>
                 </div>
