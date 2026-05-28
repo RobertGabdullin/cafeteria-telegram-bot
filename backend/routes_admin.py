@@ -2,8 +2,9 @@ import json
 from datetime import date as date_type
 from typing import Any
 
-from fastapi import APIRouter, Depends, UploadFile, File, Form, HTTPException
+from fastapi import APIRouter, Depends, UploadFile, File, Form, HTTPException, Query
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
 
 from database import Admin, Menu
 from auth import get_db, get_current_admin
@@ -18,6 +19,37 @@ def convert_json_to_internal_format(data: dict[str, Any]) -> dict[str, Any]:
     """
     # TODO: реализовать конвертацию JSON в наш формат
     return data
+
+
+@router.get("/namespaces/suggest")
+async def suggest_namespaces(
+    q: str = Query(..., min_length=1, description="Строка для поиска namespace"),
+    db: AsyncSession = Depends(get_db),
+):
+    """Возвращает до 5 namespace, начинающихся с указанной строки."""
+    result = await db.execute(
+        select(Menu.namespace)
+        .where(Menu.namespace.ilike(f"{q}%"))
+        .distinct()
+        .limit(5)
+    )
+    namespaces = [row[0] for row in result.all()]
+    return {"suggestions": namespaces}
+
+
+@router.get("/namespaces/check")
+async def check_namespace(
+    namespace: str = Query(..., description="Namespace для проверки"),
+    db: AsyncSession = Depends(get_db),
+):
+    """Проверяет, существует ли namespace в базе данных."""
+    result = await db.execute(
+        select(Menu.namespace)
+        .where(Menu.namespace == namespace)
+        .limit(1)
+    )
+    exists = result.first() is not None
+    return {"exists": exists, "namespace": namespace}
 
 
 @router.post("/upload-menu")

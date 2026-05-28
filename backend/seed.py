@@ -1,6 +1,7 @@
 import asyncio
 from datetime import date
-from database import engine, async_session, Base, Menu
+from database import engine, async_session, Base, Menu, Admin
+from auth import hash_password
 
 MOCK_MENU = {
     "date": str(date.today()),
@@ -259,6 +260,7 @@ async def seed():
         await conn.run_sync(Base.metadata.create_all)
 
     async with async_session() as session:
+        # Seed menu
         menu = Menu(
             namespace="cafeteria-main",
             date=date.today(),
@@ -267,6 +269,15 @@ async def seed():
         await session.merge(menu)
         await session.commit()
         print(f"Seeded menu for namespace='cafeteria-main', date={date.today()}")
+
+        # Seed default admin user
+        admin = Admin(
+            login="alice",
+            password_hash=hash_password("54321asd"),
+        )
+        await session.merge(admin)
+        await session.commit()
+        print("Seeded admin user: alice")
 
 
 if __name__ == "__main__":

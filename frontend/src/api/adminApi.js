@@ -19,3 +19,41 @@ export async function uploadMenu({ file, namespace, date }) {
 
   return response.json();
 }
+
+export async function suggestNamespaces(query) {
+  if (!query || query.trim().length === 0) {
+    return { suggestions: [] };
+  }
+
+  const response = await fetch(
+    `${API_BASE}/namespaces/suggest?q=${encodeURIComponent(query)}`,
+    {
+      credentials: "include",
+    }
+  );
+
+  if (!response.ok) {
+    return { suggestions: [] };
+  }
+
+  return response.json();
+}
+
+export async function checkNamespace(namespace) {
+  if (!namespace || namespace.trim().length === 0) {
+    return { exists: false, namespace: "" };
+  }
+
+  const response = await fetch(
+    `${API_BASE}/namespaces/check?namespace=${encodeURIComponent(namespace)}`,
+    {
+      credentials: "include",
+    }
+  );
+
+  if (!response.ok) {
+    return { exists: false, namespace };
+  }
+
+  return response.json();
+}

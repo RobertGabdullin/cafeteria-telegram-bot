@@ -1,5 +1,5 @@
 import secrets
-from datetime import datetime, timedelta
+from datetime import datetime
 from typing import Optional
 
 import bcrypt
@@ -8,9 +8,10 @@ from sqlalchemy import select, delete
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database import async_session, Admin, Session
+from config import settings
 
-SESSION_COOKIE_NAME = "session"
-SESSION_DURATION = timedelta(days=30)
+SESSION_COOKIE_NAME = settings.SESSION_COOKIE_NAME
+SESSION_DURATION = settings.SESSION_DURATION
 
 
 def hash_password(password: str) -> str:
@@ -81,7 +82,7 @@ def set_session_cookie(response: Response, token: str) -> None:
         max_age=int(SESSION_DURATION.total_seconds()),
         httponly=True,
         samesite="lax",
-        secure=False,  # На проде с HTTPS → True
+        secure=settings.SECURE_COOKIES,
     )
 
 

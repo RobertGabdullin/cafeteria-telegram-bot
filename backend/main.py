@@ -9,8 +9,9 @@ from sqlalchemy import select
 from database import async_session, Menu
 from routes_auth import router as auth_router
 from routes_admin import router as admin_router
+from config import settings
 
-app = FastAPI()
+app = FastAPI(debug=settings.DEBUG)
 
 app.include_router(auth_router)
 app.include_router(admin_router)

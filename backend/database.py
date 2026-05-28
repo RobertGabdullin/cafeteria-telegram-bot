@@ -3,9 +3,9 @@ from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
 from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy import Column, String, Date, JSON, Integer, DateTime, ForeignKey
 
-DATABASE_URL = "postgresql+asyncpg://postgres:postgres@localhost:5439/cafeteria"
+from config import settings
 
-engine = create_async_engine(DATABASE_URL)
+engine = create_async_engine(settings.DATABASE_URL)
 async_session = async_sessionmaker(engine, expire_on_commit=False)
 
 
