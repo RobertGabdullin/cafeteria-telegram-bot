@@ -1,3 +1,7 @@
+.trayAssembly {
+  width: 100%;
+}
+
 .container {
   background: var(--color-white);
   border-radius: var(--radius-lg);
@@ -21,6 +25,21 @@
   font-size: 16px;
   font-weight: 600;
   color: var(--color-gray-800);
+}
+
+/* === Кнопка-тоггл (скрыта на десктопе) === */
+
+.toggleButton {
+  display: none;
+}
+
+.toggleArrow {
+  transition: transform 0.2s ease;
+  font-size: 0.75rem;
+}
+
+.toggleArrowOpen {
+  transform: rotate(180deg);
 }
 
 .inputWrapper {
@@ -103,13 +122,44 @@
   text-align: center;
 }
 
+/* === Мобильная адаптация === */
+
 @media (max-width: 768px) {
-  .container {
-    padding: 12px;
+  .trayAssembly {
+    width: 100%;
   }
 
-  .title {
-    font-size: 15px;
+  .toggleButton {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: var(--color-white);
+    border: 2px solid var(--color-mustard);
+    border-radius: var(--radius-md);
+    font-family: var(--font-family);
+    font-size: 0.95rem;
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-green);
+    cursor: pointer;
+  }
+
+  .container {
+    display: none;
+    margin-top: var(--spacing-sm);
+  }
+
+  .containerOpen {
+    display: block;
+  }
+
+  .header {
+    display: none;
+  }
+
+  .container {
+    padding: 12px;
   }
 
   .textarea {
