@@ -6,7 +6,7 @@ DOCKER_COMPOSE := $(shell docker compose version >/dev/null 2>&1 && echo "docker
 # Запуск всего проекта в Docker
 up:
 	$(DOCKER_COMPOSE) down -v
-	$(DOCKER_COMPOSE) up -d --wait
+	$(DOCKER_COMPOSE) up -d --wait --build
 	$(DOCKER_COMPOSE) exec -T backend python backend/seed.py
 
 up-local:

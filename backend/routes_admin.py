@@ -128,8 +128,8 @@ async def tray_suggest(
         from_time, to_time = time_range.split("—")
         dishes = [
             d for d in dishes
-            if d.get("timeRange", {}).get("from") == from_time
-            and d.get("timeRange", {}).get("to") == to_time
+            if (d.get("timeRange") or {}).get("from") == from_time
+            and (d.get("timeRange") or {}).get("to") == to_time
         ]
     
     # Добавляем бизнес-ланч к доступным блюдам
@@ -141,8 +141,8 @@ async def tray_suggest(
         from_time, to_time = time_range.split("—")
         bl_items = [
             d for d in bl_items
-            if d.get("timeRange", {}).get("from") == from_time
-            and d.get("timeRange", {}).get("to") == to_time
+            if (d.get("timeRange") or {}).get("from") == from_time
+            and (d.get("timeRange") or {}).get("to") == to_time
         ]
     
     # Объединяем блюда

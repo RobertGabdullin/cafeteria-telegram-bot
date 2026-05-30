@@ -20,8 +20,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Копирование кода бекенда
 COPY backend/ ./backend/
 
-# Копирование .env файла (если существует)
-COPY .env .env || true
+# Копирование .env файла
+COPY .env .env
 
 # Сборка фронтенда
 # Копируем package files для установки зависимостей
