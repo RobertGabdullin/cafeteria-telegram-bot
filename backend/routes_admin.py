@@ -8,6 +8,7 @@ from sqlalchemy import select
 
 from database import Admin, Menu
 from auth import get_db, get_current_admin
+from llm_service import suggest_dishes
 
 router = APIRouter(prefix="/api/admin", tags=["admin"])
 
@@ -87,3 +88,80 @@ async def upload_menu(
         "date": str(date),
         "uploaded_by": admin.login,
     }
+
+
+@router.post("/tray-suggest")
+async def tray_suggest(
+    user_prompt: str = Form(...),
+    namespace: str = Form(...),
+    time_range: str | None = Form(None),
+    db: AsyncSession = Depends(get_db),
+):
+    """
+    Подбирает блюда на основе пользовательского промпта с помощью LLM.
+    
+    Args:
+        user_prompt: Описание пользователя (что хочет съесть)
+        namespace: Namespace меню
+        time_range: Временной диапазон (например, "09:00—12:00"), опционально
+    
+    Returns:
+        Список ID подобранных блюд
+    """
+    # Получаем меню для namespace
+    result = await db.execute(
+        select(Menu).where(
+            Menu.namespace == namespace,
+            Menu.date == date_type.today(),
+        )
+    )
+    menu = result.scalar_one_or_none()
+    
+    if not menu:
+        raise HTTPException(status_code=404, detail="Menu not found for today")
+    
+    menu_data = menu.menu_json
+    dishes = menu_data.get("dishes", [])
+    
+    # Фильтруем блюда по временному диапазону, если указан
+    if time_range and time_range != "all":
+        from_time, to_time = time_range.split("—")
+        dishes = [
+            d for d in dishes
+            if d.get("timeRange", {}).get("from") == from_time
+            and d.get("timeRange", {}).get("to") == to_time
+        ]
+    
+    # Добавляем бизнес-ланч к доступным блюдам
+    business_lunch = menu_data.get("businessLunch", {})
+    bl_items = business_lunch.get("items", [])
+    
+    # Фильтруем бизнес-ланч по временному диапазону
+    if time_range and time_range != "all":
+        from_time, to_time = time_range.split("—")
+        bl_items = [
+            d for d in bl_items
+            if d.get("timeRange", {}).get("from") == from_time
+            and d.get("timeRange", {}).get("to") == to_time
+        ]
+    
+    # Объединяем блюда
+    all_dishes = dishes + bl_items
+    
+    # Формируем список блюд для отправки в LLM (только нужные поля)
+    available_dishes = []
+    for dish in all_dishes:
+        available_dishes.append({
+            "id": dish.get("id"),
+            "name": dish.get("name", ""),
+            "composition": dish.get("composition", ""),
+            "kkal": dish.get("kkal"),
+            "proteins": dish.get("proteins"),
+            "fats": dish.get("fats"),
+            "carbs": dish.get("carbs"),
+        })
+    
+    # Вызываем LLM сервис
+    suggested_ids = await suggest_dishes(user_prompt, available_dishes)
+    
+    return {"suggested_dish_ids": suggested_ids}

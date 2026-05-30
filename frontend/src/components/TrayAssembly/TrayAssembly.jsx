@@ -1,28 +1,36 @@
 import { useState } from "react";
+import { useAuth } from "../../contexts/AuthContext";
+import { suggestTrayDishes } from "../../api/menuApi";
 import styles from "./TrayAssembly.module.css";
 
-export default function TrayAssembly({ onTraySelect }) {
+export default function TrayAssembly({ onTraySelect, namespace, activeTimeRange }) {
   const [prompt, setPrompt] = useState("");
   const [isSelecting, setIsSelecting] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const { isAuthenticated } = useAuth();
 
   const handleSelect = async () => {
     if (!prompt.trim()) return;
     
     setIsSelecting(true);
     
-    // Заглушка: всегда выделяем определенные блюда независимо от промпта
-    // В будущем здесь будет вызов API для подбора блюд по промпту
-    const mockSelectedDishIds = [1, 3, 5]; // ID блюд для заглушки
-    
-    // Имитация задержки API
-    await new Promise(resolve => setTimeout(resolve, 500));
-    
-    if (onTraySelect) {
-      onTraySelect(mockSelectedDishIds);
+    try {
+      // Вызываем API для подбора блюд
+      const result = await suggestTrayDishes({
+        namespace,
+        prompt,
+        timeRange: activeTimeRange !== "all" ? activeTimeRange : null,
+      });
+      
+      if (onTraySelect && result.suggested_dish_ids) {
+        onTraySelect(result.suggested_dish_ids);
+      }
+    } catch (error) {
+      console.error("Ошибка подбора блюд:", error);
+      // В случае ошибки можно показать уведомление пользователю
+    } finally {
+      setIsSelecting(false);
     }
-    
-    setIsSelecting(false);
   };
 
   const handleKeyPress = (e) => {

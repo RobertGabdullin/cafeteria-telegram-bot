@@ -1,33 +1,36 @@
 .PHONY: up down add-admin build build-backend build-frontend seed logs dev backend-local frontend-local
 
+# Авто-определение команды docker-compose (docker compose vs docker-compose)
+DOCKER_COMPOSE := $(shell docker compose version >/dev/null 2>&1 && echo "docker compose" || echo "docker-compose")
+
 # Запуск всего проекта в Docker
 up:
-	docker-compose down -v
-	docker-compose up -d --wait
-	docker-compose exec -T backend python backend/seed.py
+	$(DOCKER_COMPOSE) down -v
+	$(DOCKER_COMPOSE) up -d --wait
+	$(DOCKER_COMPOSE) exec -T backend python backend/seed.py
 
 up-local:
-	docker-compose down -v
-	docker-compose up db -d --wait
+	$(DOCKER_COMPOSE) down -v
+	$(DOCKER_COMPOSE) up db -d --wait
 	python ./backend/seed.py
 	cd frontend && npm run build
 	cd backend && uvicorn main:app --reload --port 8000
 
 # Остановка и очистка
 down:
-	docker-compose down -v
+	$(DOCKER_COMPOSE) down -v
 
 # Добавление админа
 add-admin:
-	docker-compose exec -T backend python backend/add_admin.py --login=$(LOGIN)
+	$(DOCKER_COMPOSE) exec -T backend python backend/add_admin.py --login=$(LOGIN)
 
 # Сборка всех образов
 build:
-	docker-compose build
+	$(DOCKER_COMPOSE) build
 
 # Сборка бекенда
 build-backend:
-	docker-compose build backend
+	$(DOCKER_COMPOSE) build backend
 
 # Сборка фронтенда
 build-frontend:
@@ -35,11 +38,11 @@ build-frontend:
 
 # Сидирование базы данных
 seed:
-	docker-compose exec -T backend python backend/seed.py
+	$(DOCKER_COMPOSE) exec -T backend python backend/seed.py
 
 # Просмотр логов
 logs:
-	docker-compose logs -f
+	$(DOCKER_COMPOSE) logs -f
 
 # Запуск бекенда локально (для разработки)
 backend-local:

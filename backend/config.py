@@ -1,7 +1,15 @@
 # -*- coding: utf-8 -*-
+from pathlib import Path
+from dotenv import load_dotenv
 import os
 from typing import Optional
 from datetime import timedelta
+
+# Загружаем .env из корневой директории (для локальной разработки)
+# При сборке через docker-compose .env будет в том же месте, что и docker-compose.yaml
+env_path = Path(__file__).parent.parent / ".env"
+if env_path.exists():
+    load_dotenv(dotenv_path=env_path)
 
 
 class Settings:
@@ -38,6 +46,11 @@ class Settings:
 
     # SSL/TLS для cookie (только для production)
     SECURE_COOKIES: bool = os.getenv("SECURE_COOKIES", "false").lower() == "true"
+
+    # LLM settings
+    LLM_API_KEY: str = os.getenv("LLM_API_KEY", "")
+    LLM_API_URL: str = os.getenv("LLM_API_URL", "https://api.proxyapi.ru/openai/v1/chat/completions")
+    LLM_MODEL: str = os.getenv("LLM_MODEL", "gpt-5.4-mini")
 
 
 # Глобальный экземпляр настроек

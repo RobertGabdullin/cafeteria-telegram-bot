@@ -204,7 +204,11 @@ export default function App() {
             availableTags={availableTags}
           />
 
-          <TrayAssembly onTraySelect={handleTraySelect} />
+          <TrayAssembly
+            onTraySelect={handleTraySelect}
+            namespace={namespace || "cafeteria-main"}
+            activeTimeRange={activeTimeRange}
+          />
         </div>
 
         <div className={styles.mainContent}>

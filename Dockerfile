@@ -20,6 +20,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Копирование кода бекенда
 COPY backend/ ./backend/
 
+# Копирование .env файла (если существует)
+COPY .env .env || true
+
 # Сборка фронтенда
 # Копируем package files для установки зависимостей
 COPY frontend/package.json frontend/package-lock.json* ./frontend/
