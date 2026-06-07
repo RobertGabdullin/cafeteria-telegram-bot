@@ -1,8 +1,10 @@
 const API_BASE = "/api/admin";
 
-export async function uploadMenu({ file, namespace, date }) {
+export async function uploadMenu({ files, namespace, date }) {
   const formData = new FormData();
-  formData.append("file", file);
+  files.forEach((file) => {
+    formData.append("files", file);
+  });
   formData.append("namespace", namespace);
   formData.append("date", date);
 

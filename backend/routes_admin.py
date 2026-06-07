@@ -14,12 +14,89 @@ router = APIRouter(prefix="/api/admin", tags=["admin"])
 
 
 def convert_json_to_internal_format(data: dict[str, Any]) -> dict[str, Any]:
-    """Конвертирует загруженный JSON во внутренний формат меню.
+    props = data.get("props", {})
+    template = data.get("template", "")
     
-    Пока пустая заглушка - данные возвращаются как есть.
-    """
-    # TODO: реализовать конвертацию JSON в наш формат
-    return data
+    # Определяем тип меню по шаблону или наличию price в props
+    is_business_lunch = template == "lunch.jinja2" or "price" in props
+    
+    # Получаем временной интервал
+    interval = props.get("interval", {})
+    time_range = {}
+    if interval.get("start_time") and interval.get("end_time"):
+        time_range = {
+            "from": interval["start_time"],
+            "to": interval["end_time"],
+        }
+    
+    dishes = []
+    categs = props.get("categs", {})
+    
+    for category_ru, items in categs.items():
+        # Используем категорию как есть (без маппинга)
+        category = category_ru
+        
+        for item in items:
+            # Используем alt_name, если есть, иначе name
+            name = item.get("alt_name", "") or item.get("name", "")
+            
+            # Извлекаем вес, убираем точку в конце для читабельности
+            weight = item.get("weight")
+            if weight and isinstance(weight, str) and weight.endswith("."):
+                weight = weight[:-1]
+            
+            # Извлекаем состав из description
+            composition = item.get("description", "")
+            
+            # Формируем теги как массив строк (для совместимости с seed.py и фронтом)
+            tags = []
+            if item.get("is_for_diabetics"):
+                tags.append("Для диабетиков")
+            if item.get("is_gluten_free"):
+                tags.append("Без глютена")
+            if item.get("is_lactose_free"):
+                tags.append("Без лактозы")
+            if item.get("is_post"):
+                tags.append("Постное")
+            if item.get("is_sugar_free"):
+                tags.append("Без сахара")
+            if item.get("vegitarian"):
+                tags.append("Вегетарианское")
+            
+            dish = {
+                "id": item.get("id"),
+                "name": name,
+                "category": category,
+                "composition": composition,
+                "calories": item.get("calories"),
+                "protein": item.get("protein"),
+                "fat": item.get("fat"),
+                "carbs": item.get("carbohydrate"),
+                "price": item.get("price", 0),
+                "tags": tags, 
+                "weight": weight or "0", 
+            }
+            
+            # Добавляем timeRange, если он есть в интервале
+            if time_range:
+                dish["timeRange"] = time_range
+            
+            dishes.append(dish)
+    
+    # Формируем результат
+    result = {
+        "dishes": dishes,
+    }
+    
+    # Если это бизнес-ланч, добавляем цену
+    if is_business_lunch:
+        result["businessLunch"] = {
+            "price": props.get("price", 0),
+            "items": dishes,  # Все блюда бизнес-ланча
+        }
+        result["dishes"] = []  # Основные блюда пустые, только бизнес-ланч
+    
+    return result
 
 
 @router.get("/namespaces/suggest")
@@ -55,37 +132,73 @@ async def check_namespace(
 
 @router.post("/upload-menu")
 async def upload_menu(
-    file: UploadFile = File(...),
+    files: list[UploadFile] = File(...),
     namespace: str = Form(...),
     date: date_type = Form(...),
     admin: Admin = Depends(get_current_admin),
     db: AsyncSession = Depends(get_db),
 ):
-    if file.content_type not in ("application/json", "text/json"):
-        raise HTTPException(status_code=400, detail="Ожидается JSON файл")
-
-    file_content = await file.read()
-
-    try:
-        menu_json = json.loads(file_content.decode("utf-8"))
-    except (json.JSONDecodeError, UnicodeDecodeError) as e:
-        raise HTTPException(status_code=422, detail=f"Не удалось распарсить JSON: {e}")
-
-    # Конвертируем JSON во внутренний формат
-    menu_json = convert_json_to_internal_format(menu_json)
-
+    if len(files) > 7:
+        raise HTTPException(status_code=400, detail="Максимум 7 файлов")
+    
+    # Проверяем каждый файл
+    for file in files:
+        if file.content_type not in ("application/json", "text/json"):
+            raise HTTPException(status_code=400, detail="Ожидается JSON файл")
+    
+    # Конвертируем и объединяем все файлы
+    all_dishes = []
+    business_lunch = None
+    
+    for file in files:
+        file_content = await file.read()
+        
+        try:
+            menu_json = json.loads(file_content.decode("utf-8"))
+        except (json.JSONDecodeError, UnicodeDecodeError) as e:
+            raise HTTPException(status_code=422, detail=f"Не удалось распарсить JSON: {e}")
+        
+        # Конвертируем JSON во внутренний формат
+        converted = convert_json_to_internal_format(menu_json)
+        
+        # Добавляем блюда
+        all_dishes.extend(converted.get("dishes", []))
+        
+        # Если есть бизнес-ланч, сохраняем его (берём последний)
+        if converted.get("businessLunch"):
+            business_lunch = converted["businessLunch"]
+    
+    # Формируем итоговое меню
+    final_menu = {
+        "dishes": all_dishes,
+    }
+    
+    if business_lunch:
+        final_menu["businessLunch"] = business_lunch
+    
     # Проставляем namespace и date в самом JSON
-    menu_json["namespace"] = namespace
-    menu_json["date"] = str(date)
+    final_menu["namespace"] = namespace
+    final_menu["date"] = str(date)
 
-    menu = Menu(namespace=namespace, date=date, menu_json=menu_json)
-    await db.merge(menu)
+    # Идемпотентность: сначала удаляем существующее меню для этой даты и namespace
+    await db.execute(
+        Menu.__table__.delete().where(
+            Menu.namespace == namespace,
+            Menu.date == date,
+        )
+    )
+    await db.flush()  # Применяем удаление перед вставкой
+
+    # Создаём новую запись
+    menu = Menu(namespace=namespace, date=date, menu_json=final_menu)
+    db.add(menu)
     await db.commit()
 
     return {
         "ok": True,
         "namespace": namespace,
         "date": str(date),
+        "files_count": len(files),
         "uploaded_by": admin.login,
     }
 

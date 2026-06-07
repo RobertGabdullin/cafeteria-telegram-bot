@@ -118,12 +118,14 @@ export function useMenu(namespace) {
   }, [menu, timeRanges]);
 
   const isBusinessLunch = activeCategory === "Бизнес ланч";
+  const hasBusinessLunch = menu?.businessLunch?.items && menu.businessLunch.items.length > 0;
 
   const filteredDishes = useMemo(() => {
     if (!menu) return [];
 
     // Если выбрана категория "Бизнес ланч" — показываем только бизнес-ланч
     if (isBusinessLunch) {
+      if (!hasBusinessLunch) return [];
       const nutritionFilters = {
         ...filters,
         priceMin: 0,
@@ -137,7 +139,7 @@ export function useMenu(namespace) {
       }));
     }
 
-    // Если выбрана категория "Все" — показываем обычные блюда + бизнес-ланч
+    // Если выбрана категория "Все" — показываем обычные блюда + бизнес-ланч (если есть)
     if (activeCategory === "all") {
       let dishes = menu.dishes;
 
@@ -150,30 +152,36 @@ export function useMenu(namespace) {
         });
       }
 
-      // Добавляем бизнес-ланч к обычным блюдам
-      const nutritionFilters = {
-        ...filters,
-        priceMin: 0,
-        priceMax: Infinity,
-      };
-      let blDishes = filterDishes(menu.businessLunch.items, nutritionFilters);
+      let result = filterDishes(dishes, filters);
 
-      // Фильтрация бизнес-ланча по временному диапазону
-      if (activeTimeRange !== "all") {
-        const [from, to] = activeTimeRange.split("—");
-        blDishes = blDishes.filter((d) => {
-          if (!d.timeRange || !d.timeRange.from || !d.timeRange.to) return false;
-          return d.timeRange.from === from && d.timeRange.to === to;
-        });
+      // Добавляем бизнес-ланч к обычным блюдам (только если он есть)
+      if (hasBusinessLunch) {
+        const nutritionFilters = {
+          ...filters,
+          priceMin: 0,
+          priceMax: Infinity,
+        };
+        let blDishes = filterDishes(menu.businessLunch.items, nutritionFilters);
+
+        // Фильтрация бизнес-ланча по временному диапазону
+        if (activeTimeRange !== "all") {
+          const [from, to] = activeTimeRange.split("—");
+          blDishes = blDishes.filter((d) => {
+            if (!d.timeRange || !d.timeRange.from || !d.timeRange.to) return false;
+            return d.timeRange.from === from && d.timeRange.to === to;
+          });
+        }
+
+        // Добавляем к блюдам бизнес-ланч с пометкой
+        const blDishesWithCategory = blDishes.map((d) => ({
+          ...d,
+          isBusinessLunch: true,
+        }));
+
+        result = [...result, ...blDishesWithCategory];
       }
 
-      // Добавляем к блюдам бизнес-ланч с пометкой
-      const blDishesWithCategory = blDishes.map((d) => ({
-        ...d,
-        isBusinessLunch: true,
-      }));
-
-      return [...filterDishes(dishes, filters), ...blDishesWithCategory];
+      return result;
     }
 
     // Если выбрана конкретная категория — показываем только её
@@ -189,7 +197,7 @@ export function useMenu(namespace) {
     }
 
     return filterDishes(dishes, filters);
-  }, [menu, activeCategory, activeTimeRange, filters, isBusinessLunch]);
+  }, [menu, activeCategory, activeTimeRange, filters, isBusinessLunch, hasBusinessLunch]);
 
   const filterRanges = useMemo(() => {
     if (!menu) return getFilterRanges([]);

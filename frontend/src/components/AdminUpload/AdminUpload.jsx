@@ -8,6 +8,8 @@ function todayISO() {
   return new Date().toISOString().split("T")[0];
 }
 
+const MAX_FILES = 7;
+
 export default function AdminUpload() {
   const { user, logout } = useAuth();
   const inputRef = useRef(null);
@@ -18,7 +20,7 @@ export default function AdminUpload() {
   const [namespaceExists, setNamespaceExists] = useState(null);
   const [showNamespaceCheck, setShowNamespaceCheck] = useState(false);
   const [date, setDate] = useState(todayISO());
-  const [file, setFile] = useState(null);
+  const [files, setFiles] = useState([]);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
   const [submitting, setSubmitting] = useState(false);
@@ -77,6 +79,32 @@ export default function AdminUpload() {
     setIsTyping(true);
   }
 
+  function handleFileChange(e) {
+    const selectedFiles = Array.from(e.target.files || []);
+    if (selectedFiles.length > MAX_FILES) {
+      setError(`Максимум можно выбрать ${MAX_FILES} файлов`);
+      return;
+    }
+    // Добавляем новые файлы к существующим
+    setFiles((prevFiles) => {
+      const newFiles = [...prevFiles, ...selectedFiles];
+      if (newFiles.length > MAX_FILES) {
+        setError(`Максимум можно выбрать ${MAX_FILES} файлов`);
+        return prevFiles;
+      }
+      setError(null);
+      return newFiles;
+    });
+    // Очищаем input, чтобы можно было выбрать тот же файл снова
+    if (inputRef.current) {
+      inputRef.current.value = "";
+    }
+  }
+
+  function removeFile(index) {
+    setFiles(files.filter((_, i) => i !== index));
+  }
+
   async function handleSubmit(e) {
     e.preventDefault();
     setError(null);
@@ -84,11 +112,11 @@ export default function AdminUpload() {
     setSubmitting(true);
 
     try {
-      const result = await uploadMenu({ file, namespace, date });
+      const result = await uploadMenu({ files, namespace, date });
       setSuccess(
         `Меню успешно загружено для «${result.namespace}» на ${result.date}`
       );
-      setFile(null);
+      setFiles([]);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -163,28 +191,47 @@ export default function AdminUpload() {
           </div>
 
           <div className={styles.field}>
-            <label className={styles.label}>JSON файл</label>
+            <label className={styles.label}>JSON файлы (макс. {MAX_FILES})</label>
             <label
-              className={`${styles.fileLabel} ${file ? styles.fileLabelActive : ""}`}
+              className={`${styles.fileLabel} ${files.length > 0 ? styles.fileLabelActive : ""}`}
             >
               <input
                 className={styles.fileInput}
                 type="file"
                 accept="application/json"
-                onChange={(e) => setFile(e.target.files?.[0] || null)}
+                multiple
+                onChange={handleFileChange}
                 disabled={submitting}
               />
               <div className={styles.fileIcon}>📄</div>
               <div className={styles.fileText}>
-                {file ? (
+                {files.length > 0 ? (
                   <>
-                    Выбран файл: <div className={styles.fileName}>{file.name}</div>
+                    Выбрано файлов: {files.length}
                   </>
                 ) : (
                   <>Нажмите чтобы выбрать JSON</>
                 )}
               </div>
             </label>
+            
+            {files.length > 0 && (
+              <ul className={styles.fileList}>
+                {files.map((file, index) => (
+                  <li key={index} className={styles.fileItem}>
+                    <span className={styles.fileName}>{file.name}</span>
+                    <button
+                      type="button"
+                      className={styles.removeButton}
+                      onClick={() => removeFile(index)}
+                      disabled={submitting}
+                    >
+                      ✕
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
 
           {error && <div className={styles.error}>❌ {error}</div>}
@@ -193,7 +240,7 @@ export default function AdminUpload() {
           <button
             type="submit"
             className={styles.submit}
-            disabled={submitting || !file || !namespace || !date}
+            disabled={submitting || files.length === 0 || !namespace || !date}
           >
             {submitting ? "Загрузка..." : "Загрузить меню"}
           </button>

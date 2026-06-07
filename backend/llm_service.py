@@ -22,9 +22,17 @@ async def suggest_dishes(
     # Формируем системный промпт с информацией о доступных блюдах
     dishes_info = []
     for dish in available_dishes:
+        # weight может быть строкой (например, "250 г") или числом
+        weight = dish.get('weight', 'N/A')
+        if isinstance(weight, (int, float)):
+            weight_str = f"{int(weight)} г"
+        else:
+            weight_str = str(weight)
+        
         dish_str = (
             f"ID: {dish['id']}, "
             f"Название: {dish['name']}, "
+            f"Вес: {weight_str}, "
             f"Калории: {dish.get('kkal', 'N/A')}, "
             f"Белки: {dish.get('proteins', 'N/A')}г, "
             f"Жиры: {dish.get('fats', 'N/A')}г, "

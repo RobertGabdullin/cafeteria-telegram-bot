@@ -28,8 +28,8 @@ export default function DishCard({ dish, showPrice = true, businessLunchPrice })
                 Бизнес ланч
               </span>
             )}
-            {dish.tags && dish.tags.map((tag) => (
-              <span key={tag} className={styles.badge}>
+            {dish.tags && Array.isArray(dish.tags) && dish.tags.map((tag, index) => (
+              <span key={index} className={styles.badge}>
                 {tag}
               </span>
             ))}
@@ -37,7 +37,7 @@ export default function DishCard({ dish, showPrice = true, businessLunchPrice })
         </div>
 
         <div className={styles.meta}>
-          <span className={styles.weight}>{dish.weight} г</span>
+          <span className={styles.weight}>{dish.weight}</span>
           <div className={styles.nutrients}>
             <div className={`${styles.nutrient} ${styles.nutrientCalories}`}>
               <span className={styles.nutrientValue}>{dish.calories}</span>

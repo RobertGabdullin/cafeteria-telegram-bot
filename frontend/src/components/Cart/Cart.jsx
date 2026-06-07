@@ -94,7 +94,7 @@ export default function Cart() {
                           <span className={styles.cartItemName}>{dish.name}</span>
                         </div>
                         <div className={styles.cartItemDetails}>
-                          <span className={styles.cartItemWeight}>{dish.weight} г</span>
+                          <span className={styles.cartItemWeight}>{dish.weight}</span>
                           <span className={styles.cartItemCalories}>{dish.calories} ккал</span>
                           <span className={styles.cartItemPrice}>{dish.price} ₽</span>
                         </div>
@@ -121,7 +121,7 @@ export default function Cart() {
                               <span className={styles.cartItemName}>{dish.name}</span>
                             </div>
                             <div className={styles.cartItemDetails}>
-                              <span className={styles.cartItemWeight}>{dish.weight} г</span>
+                              <span className={styles.cartItemWeight}>{dish.weight}</span>
                               <span className={styles.cartItemCalories}>{dish.calories} ккал</span>
                             </div>
                             <button className={styles.removeItem}>✕</button>
