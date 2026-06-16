@@ -77,7 +77,9 @@ async def suggest_dishes(
                         {"role": "system", "content": system_prompt},
                         {"role": "user", "content": user_prompt},
                     ],
-                    "temperature": 0.4,
+                    "thinking": {"type": "enabled"},
+                    "reasoning_effort": "low",
+                    "stream": False,
                 },
             )
             response.raise_for_status()
