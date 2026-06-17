@@ -62,11 +62,11 @@ export default function TrayAssembly({ onTraySelect, namespace, activeTimeRange 
             onKeyPress={handleKeyPress}
             rows={3}
           />
-          <button
-            className={`${styles.button} ${isSelecting ? styles.buttonLoading : ""}`}
-            onClick={handleSelect}
-            disabled={!prompt.trim() || isSelecting}
-          >
+<button
+  className={`${styles.button} ${isSelecting ? styles.buttonLoading : ""}`}
+  onClick={handleSelect}
+  disabled={!prompt.trim() || isSelecting}
+>
             {isSelecting ? (
               <>
                 <span className={styles.spinner}></span>
